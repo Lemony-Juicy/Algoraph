@@ -1,0 +1,29 @@
+﻿<UserControl x:Class="Algoraph.Views.GraphData"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Algoraph.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" Width="310">
+    <Border
+        CornerRadius="15"      
+        Background="{StaticResource DarkGradient}"
+        Margin="0,10,0,0">
+        <Grid Margin="10">
+            <StackPanel>
+                <Label 
+                    x:Name="nodeInfo" Visibility="Collapsed"
+                    Style="{StaticResource NodeInfo}" 
+                    Margin="0 0 0 15"/>
+
+                <Label 
+                    x:Name="arcInfo" Visibility="Collapsed"
+                    Style="{StaticResource ArcInfo}" 
+                    Margin="0 0 0 15"/>
+
+            </StackPanel>
+        </Grid>
+
+    </Border>
+</UserControl>

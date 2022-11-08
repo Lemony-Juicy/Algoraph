@@ -1,0 +1,42 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style x:Key="Button" TargetType="{x:Type Button}">
+        <Style.Setters>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                            <Border CornerRadius="4" Margin="5" x:Name="border" Background="{TemplateBinding Background}">
+                                <TextBlock 
+                                    VerticalAlignment="Center" 
+                                    HorizontalAlignment="Center"    
+                                    Margin="5"
+                                    FontSize="{TemplateBinding FontSize}"
+                                    FontFamily="{TemplateBinding FontFamily}"
+                                    Foreground="White"                       
+                                    Text="{TemplateBinding Content}"/>
+                            </Border>
+
+                            <Border CornerRadius="4" Margin="5" x:Name="borderShade" Background="Black" Opacity="0"/>
+
+                        </Grid>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="CornerRadius" Value="5"/>
+                                <Setter TargetName="borderShade" Property="Opacity" Value="0.3"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+
+                </Setter.Value>
+            </Setter>
+
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style.Setters>
+    </Style>
+    
+    
+</ResourceDictionary>
