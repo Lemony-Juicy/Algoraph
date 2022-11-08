@@ -2,13 +2,12 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Algoraph"
-             StartupUri="MainMenu.xaml">
+             StartupUri="/AppWindows/Editor.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Themes/ToggleButton.xaml"/>
+                <ResourceDictionary Source="/Themes/ButtonStyles.xaml"/>
                 <ResourceDictionary Source="/Themes/Colours.xaml"/>
-                <ResourceDictionary Source="/Themes/Button.xaml"/>
                 <ResourceDictionary Source="/Themes/node.xaml"/>
                 <ResourceDictionary Source="/Themes/arc.xaml"/>
                 <ResourceDictionary Source="/Themes/InfoPanel.xaml"/>

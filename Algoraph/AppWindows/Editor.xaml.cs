@@ -196,15 +196,21 @@ namespace Algoraph
             }
         }
 
-        public void ClearGraph()
+        public void ClearGraph(bool? warning=true)
         {
-            MessageBoxResult result = MessageBox.Show(
-                "Are you sure you want to completely erase the current state of this graph?", 
-                "AlgoRaph Notice", 
-                MessageBoxButton.YesNo, 
-                MessageBoxImage.Warning, 
+            MessageBoxResult result = MessageBoxResult.Yes;
+
+            if (warning == true)
+            {
+                result = MessageBox.Show(
+                "Are you sure you want to completely erase the current state of this graph?",
+                "AlgoRaph Notice",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning,
                 MessageBoxResult.No
                 );
+            }
+            
 
             if (result == MessageBoxResult.Yes)
             {

@@ -17,19 +17,14 @@
         Margin="0,10,0,0">
         <Grid>
             <StackPanel Margin="5">
-                <StackPanel Orientation="Horizontal">
-                    <CheckBox x:Name="autoClear" Margin="5"/>
-                    <TextBlock 
-                        FontFamily="Bahnschrift"
-                        Foreground="{StaticResource RedGradient}"
-                        FontSize="14"
-                        VerticalAlignment="Center">
-                        Autoclear
-                    </TextBlock>
-                </StackPanel>
-
-
-
+                <CheckBox 
+                    x:Name="autoClear" 
+                    Checked="AutoClear_Checked"               
+                    Style="{StaticResource CheckBox}"
+                    Tag="Autoclear (Disables Warning)"
+                    Foreground="{StaticResource RedGradient}"
+                    Background="PaleVioletRed"/>
+                
                 <StackPanel Orientation="Horizontal" Margin="0 10 0 0">
                     <Button 
                         HorizontalAlignment="Left"

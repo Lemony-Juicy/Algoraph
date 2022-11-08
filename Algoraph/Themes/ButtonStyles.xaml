@@ -1,0 +1,132 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style x:Key="Button" TargetType="Button">
+        <Style.Setters>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                            <Border CornerRadius="4" Margin="5" x:Name="border" Background="{TemplateBinding Background}">
+                                <TextBlock 
+                                    VerticalAlignment="Center" 
+                                    HorizontalAlignment="Center"    
+                                    Margin="5"
+                                    FontSize="{TemplateBinding FontSize}"
+                                    FontFamily="{TemplateBinding FontFamily}"
+                                    Foreground="White"                       
+                                    Text="{TemplateBinding Content}"/>
+                            </Border>
+
+                            <Border CornerRadius="4" Margin="5" x:Name="borderShade" Background="Black" Opacity="0"/>
+
+                        </Grid>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="CornerRadius" Value="5"/>
+                                <Setter TargetName="borderShade" Property="Opacity" Value="0.3"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+
+                </Setter.Value>
+            </Setter>
+
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style.Setters>
+    </Style>
+
+
+    <Style BasedOn="{StaticResource {x:Type ToggleButton}}" x:Key="ToggleButton" TargetType="RadioButton">
+        <Style.Setters>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                            <Border CornerRadius="4" Margin="5" x:Name="border" Background="{TemplateBinding Background}">
+                                <TextBlock 
+                                    VerticalAlignment="{TemplateBinding VerticalAlignment}" 
+                                    HorizontalAlignment="{TemplateBinding HorizontalAlignment}"                                       
+                                    FontSize="10"     
+                                    FontFamily="{TemplateBinding FontFamily}"
+                                    Foreground="White"                       
+                                    Text="{TemplateBinding Content}"/>
+                            </Border>
+
+                            <Border CornerRadius="4" Margin="5" x:Name="borderShade" Background="Black" Opacity="0"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="CornerRadius" Value="5"/>
+                                <Setter TargetName="borderShade" Property="Opacity" Value="0.3"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="borderShade" Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style.Setters>
+    </Style>
+
+
+    <Style x:Key="CheckBox" TargetType="CheckBox">
+        <Style.Setters>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <StackPanel Orientation="Horizontal">
+                            <Grid Margin="5,5,5,7.25">
+                                <Ellipse 
+                                    Width="15" 
+                                    Height="15"
+                                    Fill="White"/>
+                                <Ellipse 
+                                    Visibility="Hidden"
+                                    Name="checkFill"
+                                    Width="12" 
+                                    Height="12"
+                                    Fill="{TemplateBinding Foreground}"/>
+                            </Grid>
+                            <Grid>
+                                <TextBlock 
+                                    Margin="0,5"
+                                    FontFamily="Bahnschrift"
+                                    Foreground="{TemplateBinding Background}"
+                                    FontSize="14"
+                                    VerticalAlignment="Center"
+                                    Text="{TemplateBinding Tag}"/>
+
+                                <TextBlock 
+                                    Margin="0,5"
+                                    Visibility="Hidden"
+                                    x:Name="checkedText"
+                                    FontFamily="Bahnschrift"
+                                    Foreground="{TemplateBinding Foreground}"
+                                    FontSize="14"
+                                    VerticalAlignment="Center"
+                                Text="{TemplateBinding Tag}"/>
+                            </Grid>
+                            
+
+                        </StackPanel>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="checkedText" Property="Visibility" Value="Visible"/>
+                                <Setter TargetName="checkFill" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style.Setters>
+        
+    </Style>
+
+</ResourceDictionary>
