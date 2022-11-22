@@ -45,6 +45,15 @@ namespace Algoraph.Views
                     "Remember to un-check the box if you do not want this feature.", "Algoraph Notice", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
+        private void HideWeights_Checked(object sender, RoutedEventArgs e)
+        {
+            ed.DisplayArcWeights(false);
+        }
+
+        private void HideWeights_Unchecked(object sender, RoutedEventArgs e)
+        {
+            ed.DisplayArcWeights(true);
+        }
 
         private void CreateOrdered_Button(object sender, RoutedEventArgs e)
         {
@@ -77,7 +86,13 @@ namespace Algoraph.Views
         private void Prims_Button(object sender, RoutedEventArgs e)
         {
             ed.Prims();
+        }        
+        
+        private void DijkstrasInfo_Button(object sender, RoutedEventArgs e)
+        {
+            ed.DijkstrasPath();
         }
+
 
         private void ClearGraph_Button(object sender, RoutedEventArgs e)
         {

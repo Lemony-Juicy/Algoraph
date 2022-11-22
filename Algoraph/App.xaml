@@ -10,7 +10,7 @@
                 <ResourceDictionary Source="/Themes/Colours.xaml"/>
                 <ResourceDictionary Source="/Themes/node.xaml"/>
                 <ResourceDictionary Source="/Themes/arc.xaml"/>
-                <ResourceDictionary Source="/Themes/InfoPanel.xaml"/>
+                <ResourceDictionary Source="/Themes/Textbox.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

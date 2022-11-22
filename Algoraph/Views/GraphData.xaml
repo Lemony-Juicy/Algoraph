@@ -12,15 +12,129 @@
         Margin="0,10,0,0">
         <Grid Margin="10">
             <StackPanel>
-                <Label 
-                    x:Name="nodeInfo" Visibility="Collapsed"
-                    Style="{StaticResource NodeInfo}" 
-                    Margin="0 0 0 15"/>
 
-                <Label 
-                    x:Name="arcInfo" Visibility="Collapsed"
-                    Style="{StaticResource ArcInfo}" 
-                    Margin="0 0 0 15"/>
+                <Border 
+                    x:Name="arcPanel"
+                    Visibility="Collapsed"
+                    Background="{DynamicResource BlueGradient}" 
+                    CornerRadius="15">
+                    <StackPanel Margin="5">
+                        <TextBlock 
+                                x:Name="arcTitle"
+                                FontFamily="Bahnschrift" 
+                                FontSize="30" 
+                                Foreground="{DynamicResource PurpleGradient}">
+                                Arc Info
+                        </TextBlock>
+
+                        <TextBlock 
+                                x:Name="arcInfo"
+                                Margin="0 5 0 5"
+                                FontSize="20"
+                                TextWrapping="WrapWithOverflow"
+                                FontFamily="Bahnschrift" 
+                                Foreground="White"/>
+
+                        <Button 
+                            Click="DeleteNonSelectedArc_Button"
+                            FontFamily="consolas"
+                            Background="{StaticResource RedGradient}"
+                            Height="35" 
+                            Style="{DynamicResource Button}">
+                            Delete NON-Selected ARC CTRL DEL)
+                        </Button>
+
+                        <Button 
+                                Click="DeleteArc_Button"
+                                FontFamily="consolas"
+                                Background="{StaticResource RedGradient}"
+                                Height="35" 
+                                Style="{DynamicResource Button}">
+                            Delete Selected ARC (DEL)
+                        </Button>
+
+                        <TextBox 
+                                x:Name="arcTextbox" 
+                                KeyDown="ArcWeightTextbox_KeyDown"
+                                FontSize="15"
+                                Margin="0 15 0 5"
+                                Tag="Change Arc Weight..."
+                                Background="Transparent"
+                                BorderBrush="{DynamicResource DarkGradient}"
+                                BorderThickness="1"
+                                Style="{DynamicResource InputBox}"/>
+                    </StackPanel>
+                </Border>
+
+                <Border 
+                    x:Name="nodePanel"
+                    Visibility="Collapsed"
+                    Background="{DynamicResource BlueGradient}" 
+                    CornerRadius="15">
+                    <StackPanel Margin="5">
+                        <TextBlock 
+                                TextWrapping="WrapWithOverflow"
+                                x:Name="nodeTitle"
+                                FontFamily="Bahnschrift" 
+                                FontSize="30" 
+                                Foreground="{DynamicResource OrangeGradient}">
+                                Node Info
+                        </TextBlock>
+
+                        <TextBlock 
+                            x:Name="nodeInfo1"
+                            Margin="0 5 0 5"
+                            FontSize="20"
+                            TextWrapping="WrapWithOverflow"
+                            FontFamily="Bahnschrift" 
+                            Foreground="{DynamicResource DryGreenGradient}"/>
+
+                        <TextBlock
+                            x:Name="nodeInfo2"
+                            FontSize="15"
+                            FontFamily="Bahnschrift" 
+                            Foreground="White"/>
+
+                        <Button
+                            x:Name="joinNodeButton"
+                            Click="JoinNode_Button"
+                            FontFamily="consolas"
+                            Background="{StaticResource OrangeGradient}"
+                            Height="35" 
+                            Style="{DynamicResource Button}">
+                            Join Selected Nodes (J)
+                        </Button>
+
+                        <Button
+                            Click="DeleteNonSelectedNode_Button"
+                            FontFamily="consolas"
+                            Background="{StaticResource RedGradient}"
+                            Height="35" 
+                            Style="{DynamicResource Button}">
+                            Delete NON-Selected Nodes (CTRL DEL)
+                        </Button>
+
+                        <Button 
+                                Click="DeleteNode_Button"
+                                FontFamily="consolas"
+                                Background="{StaticResource RedGradient}"
+                                Height="35" 
+                                Style="{DynamicResource Button}">
+                            Delete Selected Nodes (DEL)
+                        </Button>
+
+                        <TextBox 
+                                x:Name="nodeTextbox" 
+                                KeyDown="NodeNameTextbox_KeyDown"
+                                FontSize="15"
+                                Margin="0 15 0 5"
+                                Tag="Change Node Name..."
+                                Background="Transparent"
+                                BorderBrush="{DynamicResource DarkGradient}"
+                                BorderThickness="1"
+                                Style="{DynamicResource InputBox}"/>
+                    </StackPanel>
+                </Border>
 
             </StackPanel>
         </Grid>

@@ -48,8 +48,15 @@
 
     <LinearGradientBrush StartPoint="0 0" EndPoint="1.3 1" x:Key="PurpleGradient">
         <LinearGradientBrush.GradientStops>
-            <GradientStop Offset="0.0" Color="Purple"/>
+            <GradientStop Offset="0.0" Color="HotPink"/>
             <GradientStop Offset="1.0" Color="#d320f7"/>
+        </LinearGradientBrush.GradientStops>
+    </LinearGradientBrush>
+
+    <LinearGradientBrush StartPoint="0 0" EndPoint="0.9 0.5" x:Key="TurquoiseGradient">
+        <LinearGradientBrush.GradientStops>
+            <GradientStop Offset="0.0" Color="#d320f7"/>
+            <GradientStop Offset="1.0" Color="Turquoise"/>
         </LinearGradientBrush.GradientStops>
     </LinearGradientBrush>
 

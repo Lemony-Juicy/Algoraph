@@ -131,10 +131,15 @@ namespace Algoraph.Scripts
             return names.ToString();
         }
 
-        public void ChangeName(string newName)
+        public bool ChangeName(string newName)
         {
             this.name = newName;
-            this.nodeButton.Name = newName;
+            try
+            {
+                this.nodeButton.Name = newName;
+                return true;
+            }
+            catch { return false; }
         }
 
 

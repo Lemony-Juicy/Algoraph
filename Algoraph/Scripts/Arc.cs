@@ -17,7 +17,7 @@ namespace Algoraph.Scripts
         public static bool displayWeight = true;
         public static float thickness = 4.45f;
 
-        public Node?[] connections = new Node?[2] { null, null };
+        public Node[] connections = new Node[2];
         public uint weight { get; private set; }
         public string name { get; private set; }
 
@@ -45,6 +45,15 @@ namespace Algoraph.Scripts
             IncrementName();
             Canvas.SetZIndex(arcButton, 100);
             Canvas.SetZIndex(weightLabel, 300);
+        }
+
+        private void ConnectLine(Node node1, Node node2, uint weight = 1)
+        {
+            this.weight = weight;
+            connections[0] = node1;
+            connections[1] = node2;
+
+            UpdateArc(weight);
         }
 
         public void Uncheck()
@@ -112,16 +121,6 @@ namespace Algoraph.Scripts
             DerenderWeights(canvas);
         }
 
-
-        public void ConnectLine(Node node1, Node node2, uint weight = 1)
-        {
-            this.weight = weight;
-            connections[0] = node1;
-            connections[1] = node2;
-
-            UpdateArc(weight);
-        }
-
         public void UpdateArc(uint weight)
         {
             this.weight = weight;
@@ -140,7 +139,7 @@ namespace Algoraph.Scripts
             SetLabelPosition();
         }
 
-        public Node? GetConnectedNode(Node currentNode)
+        public Node GetConnectedNode(Node currentNode)
         {
             return currentNode == connections[0] ? connections[1] : connections[0];
         }

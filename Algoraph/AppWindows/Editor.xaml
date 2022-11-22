@@ -7,7 +7,13 @@
         mc:Ignorable="d"
         Title="" Height="600" Width="900"
         MinHeight="550" MinWidth="850" Icon="/Images/Icon.png">
-    <Grid Background="{StaticResource MainBackground}">
+    
+    <Grid 
+        Background="{StaticResource MainBackground}"
+        MouseMove="Main_MouseMove"
+        MouseDown="Main_MouseDown"
+        MouseUp="Main_MouseUp">
+        
         <Grid 
             Margin="5,5,0,0">
             <Grid.ColumnDefinitions>
@@ -20,36 +26,29 @@
             </Grid.RowDefinitions>
 
             <Grid 
-                PreviewMouseDown="MiddleGrid_MouseDown"
+                IsHitTestVisible="False"
                 Grid.Row="1"
                 Grid.Column="1">
-
-                <Border     
-                    MouseLeftButtonUp="MiddleGrid_MouseUp"
-                    MouseMove="MiddleGrid_MouseMove"
+                <Border
                     Margin="20,10,0,0"
-                    Grid.Row="1"
-                    Grid.Column="1"
-                    x:Name="middlePanel"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
                     CornerRadius="15"
                     Background="{StaticResource CanvasBackground}">
-
-                    <Grid 
-                        HorizontalAlignment="Stretch" 
-                        VerticalAlignment="Stretch"
-                        Margin="10"
-                        />
-
                 </Border>
+            </Grid>
 
-                <Canvas 
-                    Margin="20,10,0,0"
-                    Grid.Row="1"
-                    Grid.Column="1"
-                    x:Name="mainCanvas"/>
-
+            <Grid 
+                Grid.Column="1" 
+                Grid.Row="1">
+                <Border  
+                    x:Name="mainPanel"
+                    MouseLeftButtonUp="MainPanel_LeftMouseUp"
+                    Margin="35,25,15,15"
+                    CornerRadius="15"
+                    Background="{StaticResource CanvasBackground}">
+                </Border>
+                <Canvas Margin="35,25,15,15" x:Name="mainCanvas"/>
             </Grid>
 
             <Button 

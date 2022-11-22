@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 using System.Windows.Input;
-
+using Windows.Foundation.Diagnostics;
 
 namespace Algoraph.Scripts
 {
@@ -25,12 +27,15 @@ namespace Algoraph.Scripts
 
         public void AddItem(Node? node)
         {
-            if (nodes.Contains(node)) return;
+            if (node == null || nodes.Contains(node)) return;
+
             nodes.Add(node);
         }
 
         void RemoveItem(Node? node)
         {
+            if (node == null) return;
+
             nodes.Remove(node);
         }
 
@@ -55,7 +60,7 @@ namespace Algoraph.Scripts
 
         public void OnEnter()
         {
-            previousMouseMode = ed.middlePanel.Cursor;
+            previousMouseMode = ed.mainPanel.Cursor;
             ed.CursorHandMode();
         }
     }
@@ -83,12 +88,22 @@ namespace Algoraph.Scripts
 
         public void AddItem(Arc? arc)
         {
-            if (arcs.Contains(arc)) return;
+            if (arc == null || arcs.Contains(arc)) return;
+            arc.Check();
             arcs.Add(arc);
         }
 
-        void RemoveItem(Arc? arc)
+        public void AddItems(Arc[] arcs)
         {
+            foreach (Arc arc in arcs)
+                AddItem(arc);
+        }
+
+        public void RemoveItem(Arc? arc)
+        {
+            if (arc == null) return;
+
+            arc.Uncheck();
             arcs.Remove(arc);
         }
 
@@ -98,10 +113,8 @@ namespace Algoraph.Scripts
             AddItem(arc);
         }
 
-        public void OnUncheck(Arc? arc)
-        {
-            RemoveItem(arc);
-        }
+        public void OnUncheck(Arc? arc) => RemoveItem(arc);
+        
 
         public void OnLeave()
         {
@@ -113,7 +126,7 @@ namespace Algoraph.Scripts
 
         public void OnEnter()
         {
-            previousMouseMode = ed.middlePanel.Cursor;
+            previousMouseMode = ed.mainPanel.Cursor;
             ed.CursorHandMode();
         }
     }

@@ -98,8 +98,8 @@ namespace Algoraph.Scripts
                 {
                     // The (i-1) != j bit is to prevent arcs from the two point repeating
                     // EG: node A and B and B and A.
-                    if (i != j && (i - 1) != j && ed.random.Next(1, 5) == 2)
-                        Connect(nodes[i], nodes[j], (uint)ed.random.Next(1, 100));
+                    if (i != j && (i - 1) != j && CustomExtentions.random.Next(1, 5) == 2)
+                        Connect(nodes[i], nodes[j], (uint)CustomExtentions.random.Next(1, 100));
                 }
             }
         }
@@ -209,10 +209,9 @@ namespace Algoraph.Scripts
             }
         }
 
-        public void ToggleArcWeights()
+        public void DisplayArcWeights(bool show = false)
         {
-            Arc.displayWeight = !Arc.displayWeight;
-            if (Arc.displayWeight)
+            if (show)
             {
                 foreach (Arc arc in arcs)
                     arc.RenderWeights(ed.mainCanvas);
@@ -222,6 +221,7 @@ namespace Algoraph.Scripts
                 foreach (Arc arc in arcs)
                     arc.DerenderWeights(ed.mainCanvas);
             }
+            Arc.displayWeight = show;
         }
 
         public Node? GetClosestNode(Point pos)
