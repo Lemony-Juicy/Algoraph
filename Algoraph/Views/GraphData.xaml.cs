@@ -1,18 +1,40 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-
+using System.Data;
 
 namespace Algoraph.Views
 {
     public partial class GraphData : UserControl
     {
         readonly Editor ed;
+        public DataTable table { get; private set; }
 
         public GraphData(Editor ed)
         {
             InitializeComponent();
             this.ed = ed;
+
+            table = new();
+            CreateColumns();
+            adjDataGrid.ItemsSource = table.DefaultView;
+        }
+
+        void CreateColumns()
+        {
+            DataColumn column = new();
+            column.DataType = typeof(string);
+            column.ColumnName = "Nodes";
+            column.AutoIncrement = false;
+            column.Unique = false;
+            table.Columns.Add(column);
+
+            column = new();
+            column.DataType = typeof(string);
+            column.ColumnName = "Adjacencies";
+            column.AutoIncrement = false;
+            column.Unique = false;
+            table.Columns.Add(column);
         }
 
         #region Node Panel

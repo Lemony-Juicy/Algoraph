@@ -22,7 +22,9 @@
                         </Trigger>
 
                         <Trigger Property="IsChecked" Value="True">
-                            <Setter TargetName="arcLine" Property="Stroke" Value="Purple"/>
+                            <Setter TargetName="arcLine" Property="StrokeThickness" Value="4.5"/>
+                            <Setter TargetName="arcLine" Property="Opacity" Value="1"/>
+                            <Setter TargetName="arcLine" Property="Stroke" Value="{DynamicResource OrangeGradient}"/>
                             <Setter TargetName="arcLine" Property="Cursor" Value="Arrow"/>
                         </Trigger>
                     </ControlTemplate.Triggers>

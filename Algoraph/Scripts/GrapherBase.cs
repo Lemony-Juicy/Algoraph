@@ -47,6 +47,7 @@ namespace Algoraph.Scripts
             arcs.Add(arc);
             arc.AddToCanvas(ed.mainCanvas);
             node1.AddConnection(node2, arc);
+            ed.RenderTable();
         }
 
         public void Disconnect(Node node1, Node node2) // Connecting Two Nodes
@@ -123,6 +124,7 @@ namespace Algoraph.Scripts
             Node newNode = new Node(ed, pos);
             nodes.Add(newNode);
             newNode.AddToCanvas(ed.mainCanvas);
+            ed.RenderTable();
         }
 
         public void RemoveNode(Node node)
@@ -136,6 +138,7 @@ namespace Algoraph.Scripts
                 RemoveArc(arc);
             }
             nodes.Remove(node);
+            ed.RenderTable();
         }
 
         public void RemoveArc(Arc arc)
@@ -143,6 +146,7 @@ namespace Algoraph.Scripts
             arc.connections[0].RemoveConnection(arc.connections[1], arc);
             arc.RemoveFromCanvas(ed.mainCanvas);
             arcs.Remove(arc);
+            ed.RenderTable();
         }
 
         public void ClearArcs()

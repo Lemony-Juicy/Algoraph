@@ -6,11 +6,12 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Themes/ButtonStyles.xaml"/>
-                <ResourceDictionary Source="/Themes/Colours.xaml"/>
-                <ResourceDictionary Source="/Themes/node.xaml"/>
-                <ResourceDictionary Source="/Themes/arc.xaml"/>
-                <ResourceDictionary Source="/Themes/Textbox.xaml"/>
+                <ResourceDictionary Source="/Styles/ButtonStyles.xaml"/>
+                <ResourceDictionary Source="/Styles/Colours.xaml"/>
+                <ResourceDictionary Source="/Styles/node.xaml"/>
+                <ResourceDictionary Source="/Styles/arc.xaml"/>
+                <ResourceDictionary Source="/Styles/Textbox.xaml"/>
+                <ResourceDictionary Source="/Styles/Datagrid.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Documents;
 using System.Windows.Input;
 using Algoraph.Scripts;
 using Algoraph.Views;
@@ -196,8 +198,8 @@ namespace Algoraph
                 bool done = await grapher.Prims(new List<Node>() { selectedNodes.nodes[0] }, selectedArcs);
                 if (!done) { ShowError("Ensure the graph is fully connected"); return; }
                 selectedNodes.ClearItems();
-                MessageBox.Show("- The spanning tree is highlighted in Purple." +
-                    "\n- The arcs NOT in purple can be deleted" +
+                MessageBox.Show("- The spanning tree is highlighted in Orange." +
+                    "\n- The arcs NOT in Orange can be deleted" +
                     "\n- Press CTRL + DEL Keys to remove these arcs, or click away to ignore",
                     "Notice", MessageBoxButton.OK, MessageBoxImage.Information);
 
@@ -334,6 +336,24 @@ namespace Algoraph
         public void ShowError(string error = "Please try again with an appropriate input.")
         {
             MessageBox.Show(error, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        /// <summary>
+        /// Updates the graph adjacency list table
+        /// </summary>
+        public void RenderTable()
+        {
+            graphData.table.Clear();
+            DataRow row;
+            foreach(Node node in grapher.nodes)
+            {
+                row = graphData.table.NewRow();
+                row[0] = node.name;
+                row[1] = string.Join(',', node.nodeConnections.Select(n => n.name));
+                graphData.table.Rows.Add(row);
+            }
+
+            graphData.adjDataGrid.ItemsSource = graphData.table.DefaultView;
         }
 
         /// <summary>

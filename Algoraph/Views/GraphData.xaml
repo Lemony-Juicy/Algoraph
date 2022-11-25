@@ -13,6 +13,9 @@
         <Grid Margin="10">
             <StackPanel>
 
+                <DataGrid x:Name="adjDataGrid" AlternatingRowBackground="LightGray" AutoGenerateColumns="True">
+                </DataGrid>
+                
                 <Border 
                     x:Name="arcPanel"
                     Visibility="Collapsed"

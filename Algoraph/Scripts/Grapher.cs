@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 
-
 namespace Algoraph.Scripts
 {
     internal class Grapher : GrapherBase
@@ -12,6 +11,13 @@ namespace Algoraph.Scripts
         {
 
         }
+
+
+        bool IsTree()
+        {
+            return this.nodes.Count + 1 == this.arcs.Count;
+        }
+        
 
         #region Spanning Tree: Prim's + Kruskal's
         private List<Arc> GetOutBoundArcs(List<Node> connector)

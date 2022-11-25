@@ -60,4 +60,11 @@
         </LinearGradientBrush.GradientStops>
     </LinearGradientBrush>
 
+    <LinearGradientBrush StartPoint="0 0" EndPoint="0.9 0.5" x:Key="CyanGradient">
+        <LinearGradientBrush.GradientStops>
+            <GradientStop Offset="0.0" Color="LightBlue"/>
+            <GradientStop Offset="1.0" Color="Turquoise"/>
+        </LinearGradientBrush.GradientStops>
+    </LinearGradientBrush>
+
 </ResourceDictionary>

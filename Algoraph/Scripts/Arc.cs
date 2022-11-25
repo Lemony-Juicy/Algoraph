@@ -39,6 +39,9 @@ namespace Algoraph.Scripts
 
             this.name = currentName;
             this.arcButton.Name = currentName;
+
+            this.arcButton.MouseEnter += editor.Arc_Enter;
+            this.arcButton.MouseLeave += editor.Arc_Leave;
             this.arcButton.Checked += editor.Arc_Checked;
             this.arcButton.Unchecked += editor.Arc_Unchecked;
 

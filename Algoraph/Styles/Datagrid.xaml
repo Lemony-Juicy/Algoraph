@@ -1,0 +1,28 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style x:Key="RowHeader" TargetType="DataGridRowHeader">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="DataGridRowHeader">
+                    <Grid>
+                        <Border 
+                            CornerRadius="5"
+                            Background="LightCyan"
+                            Width="{TemplateBinding Width}"
+                            Height="{TemplateBinding Height}"/>
+                        <DataGridRowHeader 
+                            Background="{DynamicResource CanvasBackground}"
+                            Foreground="Azure">
+                            
+                        </DataGridRowHeader>
+
+
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        
+    </Style>
+    
+</ResourceDictionary>
