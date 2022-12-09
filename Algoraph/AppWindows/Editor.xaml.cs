@@ -5,7 +5,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Documents;
 using System.Windows.Input;
 using Algoraph.Scripts;
 using Algoraph.Views;
@@ -46,7 +45,20 @@ namespace Algoraph
 
         #endregion
 
+        /// <summary>
+        /// Updates the graph adjacency list table
+        /// </summary>
+        public void RenderTable()
+        {
+            graphData.adjDataGrid.ItemsSource = grapher.GetNodeInfo();
+        }
+
         #region Graph Data Events
+
+        public void UserChangeGraph(NodeInfoTable[] rows)
+        {
+            //RenderTable();
+        }
 
         public void ConnectSelectedNodes()
         {
@@ -336,24 +348,6 @@ namespace Algoraph
         public void ShowError(string error = "Please try again with an appropriate input.")
         {
             MessageBox.Show(error, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-        }
-
-        /// <summary>
-        /// Updates the graph adjacency list table
-        /// </summary>
-        public void RenderTable()
-        {
-            graphData.table.Clear();
-            DataRow row;
-            foreach(Node node in grapher.nodes)
-            {
-                row = graphData.table.NewRow();
-                row[0] = node.name;
-                row[1] = string.Join(',', node.nodeConnections.Select(n => n.name));
-                graphData.table.Rows.Add(row);
-            }
-
-            graphData.adjDataGrid.ItemsSource = graphData.table.DefaultView;
         }
 
         /// <summary>

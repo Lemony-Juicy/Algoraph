@@ -16,115 +16,134 @@
         Background="{StaticResource DarkGradient}"
         Margin="0,10,0,0">
         <Grid>
-            <StackPanel Margin="5">
-                <CheckBox 
-                    x:Name="autoClear" 
-                    Checked="AutoClear_Checked"               
-                    Style="{StaticResource CheckBox}"
-                    Tag="Autoclear (Disables Warning)"
-                    Foreground="{StaticResource RedGradient}"
-                    Background="PaleVioletRed"/>
+            <ScrollViewer>
+                <StackPanel Margin="5" Orientation="Vertical">
+                    <CheckBox 
+                        x:Name="autoClear" 
+                        Checked="AutoClear_Checked"               
+                        Style="{StaticResource CheckBox}"
+                        Tag="Autoclear (Disables Warning)"
+                        Foreground="{StaticResource RedGradient}"
+                        Background="PaleVioletRed"/>
 
-                <CheckBox 
-                    Checked="HideWeights_Checked"
-                    Unchecked="HideWeights_Unchecked"
-                    Style="{StaticResource CheckBox}"
-                    Tag="Hide Weights"
-                    Foreground="{StaticResource OrangeGradient}"
-                    Background="LightSalmon"/>
+                    <CheckBox 
+                        Checked="HideWeights_Checked"
+                        Unchecked="HideWeights_Unchecked"
+                        Style="{StaticResource CheckBox}"
+                        Tag="Hide Weights"
+                        Foreground="{StaticResource OrangeGradient}"
+                        Background="LightSalmon"/>
 
-                <StackPanel Orientation="Horizontal" Margin="0 10 0 0">
-                    <Button 
-                        HorizontalAlignment="Left"
-                        Click="CreateOrdered_Button"
+                    <StackPanel Orientation="Horizontal" Margin="0 10 0 0">
+                        <Button 
+                            Foreground="White"
+                            HorizontalAlignment="Left"
+                            Click="CreateOrdered_Button"
+                            Style="{StaticResource Button}"
+                            FontFamily="consolas"
+                            Background="{StaticResource GreenGradient}" 
+                            Height="50" Width="200">
+                            Create Ordered Nodes
+                        </Button>
+                        <TextBox 
+                            x:Name="orderedNodesDegreeInput"
+                            FontSize="15"
+                            Tag="Degree"
+                            Style="{StaticResource InputBox}"
+                            Width="80"
+                            Height="38"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" >
+                        <Button 
+                            Foreground="White"
+                            HorizontalAlignment="Left"
+                            Click="CreateRandom_Button"
+                            Style="{StaticResource Button}"
+                            FontFamily="consolas"
+                            Background="{StaticResource GreenGradient}" 
+                            Height="50" Width="200">
+                            Create Random Nodes
+                        </Button>
+                        <TextBox
+                            x:Name="randomNodesInput"
+                            FontSize="15"
+                            Tag="R1, R2"
+                            Style="{StaticResource InputBox}"
+                            Width="80"
+                            Height="38"/>
+                    </StackPanel>
+
+                    <Button
+                        Foreground="White"
+                        HorizontalAlignment="Stretch"
+                        Click="ConnectRandomly_Button"
                         Style="{StaticResource Button}"
                         FontFamily="consolas"
-                        Background="{StaticResource GreenGradient}" 
-                        Height="50" Width="200">
-                        Create Ordered Nodes
+                        Background="{StaticResource OrangeGradient}" 
+                        Height="50">
+                        Connect Nodes Randomly
                     </Button>
-                    <TextBox 
-                        x:Name="orderedNodesDegreeInput"
-                        FontSize="15"
-                        Tag="Degree"
-                        Style="{StaticResource InputBox}"
-                        Width="80"
-                        Height="38"/>
-                </StackPanel>
 
-                <StackPanel Orientation="Horizontal" >
                     <Button 
-                        HorizontalAlignment="Left"
-                        Click="CreateRandom_Button"
+                        Foreground="White"
+                        HorizontalAlignment="Stretch"
+                        Click="CreateComplete_Button"
                         Style="{StaticResource Button}"
                         FontFamily="consolas"
-                        Background="{StaticResource GreenGradient}" 
-                        Height="50" Width="200">
-                        Create Random Nodes
+                        Background="{StaticResource OrangeGradient}"
+                        Height="50">
+                        Create Complete Graph
                     </Button>
-                    <TextBox
-                        x:Name="randomNodesInput"
-                        FontSize="15"
-                        Tag="R1, R2"
-                        Style="{StaticResource InputBox}"
-                        Width="80"
-                        Height="38"/>
+
+                    <Button 
+                        Foreground="LightGoldenrodYellow"
+                        HorizontalAlignment="Stretch"
+                        Click="Prims_Button"
+                        Style="{StaticResource Button}"
+                        FontFamily="consolas"
+                        Background="{StaticResource PurpleGradient}"
+                        Height="50">
+                        Prim's Algorithm
+                    </Button>
+
+                    <Button 
+                        Foreground="LightGoldenrodYellow"
+                        HorizontalAlignment="Stretch"
+                        Click="DijkstrasInfo_Button"
+                        Style="{StaticResource Button}"
+                        FontFamily="consolas"
+                        Background="{StaticResource PurpleGradient}"
+                        Height="50">
+                        Dijkstra's Algorithm
+                    </Button>
+
+                    <Button 
+                        Foreground="LightGoldenrodYellow"
+                        HorizontalAlignment="Stretch"
+                        Click="DijkstrasInfo_Button"
+                        Style="{StaticResource Button}"
+                        FontFamily="consolas"
+                        Background="{StaticResource PurpleGradient}"
+                        Height="50">
+                        Dijkstra's Algorithm (Information)
+                    </Button>
+
+
+                    <Button 
+                        Click="ClearGraph_Button"
+                        VerticalAlignment="Bottom"
+                        Style="{StaticResource Button}"
+                        FontFamily="consolas"
+                        Background="{StaticResource RedGradient}"
+                        Height="50" Width="220" FontWeight="Black">
+                        CLEAR GRAPH
+                    </Button>
+
+                    <TextBlock x:Name="debug" Text=""/>
                 </StackPanel>
-
-                <Button
-                    HorizontalAlignment="Left"
-                    Click="ConnectRandomly_Button"
-                    Style="{StaticResource Button}"
-                    FontFamily="consolas"
-                    Background="{StaticResource OrangeGradient}" 
-                    Height="50" Width="200">
-                    Connect Nodes Randomly
-                </Button>
-
-                <Button 
-                    HorizontalAlignment="Left"
-                    Click="CreateComplete_Button"
-                    Style="{StaticResource Button}"
-                    FontFamily="consolas"
-                    Background="{StaticResource OrangeGradient}"
-                    Height="50" Width="200">
-                    Create Complete Graph
-                </Button>
-
-                <Button 
-                    HorizontalAlignment="Left"
-                    Click="Prims_Button"
-                    Style="{StaticResource Button}"
-                    FontFamily="consolas"
-                    Background="{StaticResource TurquoiseGradient}"
-                    Height="50" Width="200">
-                    Prim's Algorithm
-                </Button>
-
-                <Button 
-                    HorizontalAlignment="Left"
-                    Click="DijkstrasInfo_Button"
-                    Style="{StaticResource Button}"
-                    FontFamily="consolas"
-                    Background="{StaticResource TurquoiseGradient}"
-                    Height="50" Width="200">
-                    Dijkstra's Algorithm
-                </Button>
-
-                <TextBlock x:Name="debug" Text=""/>
-            </StackPanel>
-
-            <Grid Margin="0 0 0 10">
-                <Button 
-                    Click="ClearGraph_Button"
-                    VerticalAlignment="Bottom"
-                    Style="{StaticResource Button}"
-                    FontFamily="consolas"
-                    Background="{StaticResource RedGradient}"
-                    Height="50" Width="220" FontWeight="Black">
-                    CLEAR GRAPH
-                </Button>
-            </Grid>
+            </ScrollViewer>
+           
         </Grid>
 
     </Border>

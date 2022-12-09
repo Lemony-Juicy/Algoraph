@@ -52,6 +52,7 @@
             </Grid>
 
             <Button 
+                Foreground="White"
                 Click="ButtonBackToMenu"
                 Style="{StaticResource Button}"
                 Background="{StaticResource OrangeGradient}"

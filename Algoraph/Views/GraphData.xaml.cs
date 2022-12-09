@@ -2,39 +2,24 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Data;
+using System.Windows.Data;
+using System.Windows.Threading;
+using Algoraph.Scripts;
+using System;
 
 namespace Algoraph.Views
 {
+
     public partial class GraphData : UserControl
     {
         readonly Editor ed;
-        public DataTable table { get; private set; }
 
         public GraphData(Editor ed)
         {
             InitializeComponent();
             this.ed = ed;
 
-            table = new();
-            CreateColumns();
-            adjDataGrid.ItemsSource = table.DefaultView;
-        }
 
-        void CreateColumns()
-        {
-            DataColumn column = new();
-            column.DataType = typeof(string);
-            column.ColumnName = "Nodes";
-            column.AutoIncrement = false;
-            column.Unique = false;
-            table.Columns.Add(column);
-
-            column = new();
-            column.DataType = typeof(string);
-            column.ColumnName = "Adjacencies";
-            column.AutoIncrement = false;
-            column.Unique = false;
-            table.Columns.Add(column);
         }
 
         #region Node Panel
@@ -100,5 +85,15 @@ namespace Algoraph.Views
         }
 
         #endregion
+
+        private void adjDataGrid_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                DataGrid dataGrid = (DataGrid)sender;
+                NodeInfoTable[] newInfo = (NodeInfoTable[])dataGrid.ItemsSource;
+                ed.UserChangeGraph(newInfo);
+            }
+        }
     }
 }

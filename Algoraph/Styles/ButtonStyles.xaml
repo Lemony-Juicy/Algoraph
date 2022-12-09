@@ -14,7 +14,7 @@
                                     Margin="5"
                                     FontSize="{TemplateBinding FontSize}"
                                     FontFamily="{TemplateBinding FontFamily}"
-                                    Foreground="White"                       
+                                    Foreground="{TemplateBinding Foreground}"                       
                                     Text="{TemplateBinding Content}"/>
                             </Border>
 

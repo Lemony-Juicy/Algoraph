@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 
 namespace Algoraph.Scripts
@@ -11,6 +12,15 @@ namespace Algoraph.Scripts
 
 
         protected Editor ed;
+
+        public NodeInfoTable[] GetNodeInfo()
+        {
+            return nodes.Select(n => new NodeInfoTable()
+            {
+                Node = n.name,
+                Adjacencies = n.nodeConnections.Stringify()
+            }).ToArray() ;
+        }
 
         #region Constructor + Presets
         public GrapherBase(Editor ed, List<Node>? nodes = null)
@@ -115,8 +125,6 @@ namespace Algoraph.Scripts
             }
         }
         #endregion
-
-
         #region Removing/Adding Nodes
 
         public void AddNode(Point pos)
@@ -130,7 +138,6 @@ namespace Algoraph.Scripts
         public void RemoveNode(Node node)
         {
             node.RemoveFromCanvas(ed.mainCanvas);
-            Node.DecrementName();
             foreach (Arc arc in node.arcConnections.ToArray())
             {
                 Node nodeConnected = arc.GetConnectedNode(node);
@@ -158,6 +165,7 @@ namespace Algoraph.Scripts
             }
             Arc.ResetCurrentName();
             arcs.Clear();
+            ed.RenderTable();
         }
 
         public void ClearNodes()
@@ -166,6 +174,7 @@ namespace Algoraph.Scripts
                 node.RemoveFromCanvas(ed.mainCanvas);
             Node.ResetCurrentName();
             nodes.Clear();
+            ed.RenderTable();
         }
 
         #endregion
