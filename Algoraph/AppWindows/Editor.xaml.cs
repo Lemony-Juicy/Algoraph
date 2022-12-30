@@ -8,6 +8,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using Algoraph.Scripts;
 using Algoraph.Views;
+using Microsoft.Win32;
 
 namespace Algoraph
 {
@@ -45,6 +46,8 @@ namespace Algoraph
 
         #endregion
 
+        #region Graph Data Updates
+
         /// <summary>
         /// Updates the graph adjacency list table
         /// </summary>
@@ -53,12 +56,46 @@ namespace Algoraph
             graphData.adjDataGrid.ItemsSource = grapher.GetNodeInfo();
         }
 
-        #region Graph Data Events
-
         public void UserChangeGraph(NodeInfoTable[] rows)
         {
             //RenderTable();
         }
+
+        public void UpdateNodePanel()
+        {
+            int selectedCount = selectedNodes.nodes.Count();
+            if (selectedCount < 1) { graphData.nodePanel.Visibility = Visibility.Collapsed; return; }
+            if (selectedCount == 1)
+                graphData.joinNodeButton.Visibility = Visibility.Collapsed; 
+            else
+                graphData.joinNodeButton.Visibility = Visibility.Visible;
+
+
+            Node n = selectedNodes.nodes.Last();
+            graphData.nodeTitle.Text = $"Node Info ({n.name})";
+            graphData.nodeInfo1.Text = "Connections:\n" + n.GetNodeConnectionNames();
+
+            int degree = n.nodeConnections.Count();
+            string plurality = degree > 1 ? "s" : "";
+            graphData.nodeInfo2.Text = $"Connecting {degree} other node{plurality}";
+
+            graphData.nodePanel.Visibility = Visibility.Visible;
+        }
+
+        public void UpdateArcPanel()
+        {
+            int selectedCount = selectedArcs.arcs.Count();
+            if (selectedCount < 1) { graphData.arcPanel.Visibility = Visibility.Collapsed; return; }
+
+            Arc a = selectedArcs.arcs.Last();
+            graphData.arcTitle.Text = $"Arc Info ({a.name})";
+            graphData.arcInfo.Text = "Weighting: " + a.weight;
+            graphData.arcPanel.Visibility = Visibility.Visible;
+        }
+
+        #endregion
+
+        #region Method Events
 
         public void ConnectSelectedNodes()
         {
@@ -125,42 +162,6 @@ namespace Algoraph
 
             selectedNodes.nodes.Last().ChangeName(newName);
         }
-
-        public void UpdateNodePanel()
-        {
-            int selectedCount = selectedNodes.nodes.Count();
-            if (selectedCount < 1) { graphData.nodePanel.Visibility = Visibility.Collapsed; return; }
-            if (selectedCount == 1)
-                graphData.joinNodeButton.Visibility = Visibility.Collapsed; 
-            else
-                graphData.joinNodeButton.Visibility = Visibility.Visible;
-
-
-            Node n = selectedNodes.nodes.Last();
-            graphData.nodeTitle.Text = $"Node Info ({n.name})";
-            graphData.nodeInfo1.Text = "Connections:\n" + n.GetNodeConnectionNames();
-
-            int degree = n.nodeConnections.Count();
-            string plurality = degree > 1 ? "s" : "";
-            graphData.nodeInfo2.Text = $"Connecting {degree} other node{plurality}";
-
-            graphData.nodePanel.Visibility = Visibility.Visible;
-        }
-
-        public void UpdateArcPanel()
-        {
-            int selectedCount = selectedArcs.arcs.Count();
-            if (selectedCount < 1) { graphData.arcPanel.Visibility = Visibility.Collapsed; return; }
-
-            Arc a = selectedArcs.arcs.Last();
-            graphData.arcTitle.Text = $"Arc Info ({a.name})";
-            graphData.arcInfo.Text = "Weighting: " + a.weight;
-            graphData.arcPanel.Visibility = Visibility.Visible;
-        }
-
-        #endregion
-
-        #region Method Events
 
         public void DisplayArcWeights(bool show)
         {
@@ -276,7 +277,7 @@ namespace Algoraph
 
         #endregion
 
-        #region Component Events
+        #region Component Events (For Node and Arcs)
 
         public void Node_Checked(object sender, RoutedEventArgs e)
         {
@@ -345,7 +346,7 @@ namespace Algoraph
         {
             mainPanel.Cursor = Cursors.Hand;
         }
-        public void ShowError(string error = "Please try again with an appropriate input.")
+        public static void ShowError(string error = "Please try again with an appropriate input.")
         {
             MessageBox.Show(error, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
@@ -372,7 +373,7 @@ namespace Algoraph
 
         #endregion
 
-        #region Misc
+        #region This Window's Events
 
         private void ToggleView_Click(object sender, RoutedEventArgs e)
         {
@@ -389,6 +390,24 @@ namespace Algoraph
         {
             MainMenu menu = new MainMenu();
             menu.Show();
+        }
+
+        private void SaveStateButton(object sender, RoutedEventArgs e)
+        {
+            if (Saver.path == null)
+            {
+                OpenFileDialog fileDialogue = new OpenFileDialog();
+                fileDialogue.DefaultExt = ".json";
+                fileDialogue.Filter = "JSON files (*.json)|*.json";
+                fileDialogue.CheckFileExists = false;
+                if (fileDialogue.ShowDialog() == true)
+                {
+                    Console.WriteLine(fileDialogue.FileName);
+                    Saver.path = fileDialogue.FileName;
+                }
+            }
+
+            grapher.SaveState(); 
         }
 
         #endregion
@@ -469,6 +488,15 @@ namespace Algoraph
         {
             if (e.Key == Key.LeftCtrl)
                 this.leftCtrlDown = false;
+        }
+
+        #endregion
+
+        #region Saving and Loading
+
+        public bool LoadState()
+        {
+            return grapher.LoadState();
         }
 
         #endregion

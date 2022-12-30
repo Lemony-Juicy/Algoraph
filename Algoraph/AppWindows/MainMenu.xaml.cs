@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Algoraph.Scripts;
+using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,7 +32,27 @@ namespace Algoraph
 
         private void LoadProject_Button(object sender, RoutedEventArgs e)
         {
+            Editor editor;
+            OpenFileDialog fileDialogue = new OpenFileDialog();
+            fileDialogue.DefaultExt = ".json";
+            fileDialogue.Filter = "JSON files (*.json)|*.json";
+            if (fileDialogue.ShowDialog() == true)
+            {
+                Saver.path = fileDialogue.FileName;
+                editor = new Editor();
+                editor.Show();
 
+                if (!editor.LoadState())
+                {
+                    editor.Close();
+                    Editor.ShowError("Oh no! This file is not able to be decoded into graph data :(\n" +
+                        "Ensure that the json file selected contains the right data to be loaded.");
+                }
+                else
+                {
+                    Close();
+                }
+            }
         }
     }
 }

@@ -61,7 +61,7 @@ namespace Algoraph.Views
             if (int.TryParse(orderedNodesDegreeInput.Text, out int degree))
                 ed.CreateOrdered(degree);
             else
-                ed.ShowError("Please try again with an appropriate INTEGER input.");
+                Editor.ShowError("Please try again with an appropriate INTEGER input.");
         }
 
         private void CreateRandom_Button(object sender, RoutedEventArgs e)
@@ -70,7 +70,7 @@ namespace Algoraph.Views
             if (TryParseRandNodeInp(out int[] rands))
                 ed.CreateRandom(rands[0], rands[1]);
             else
-                ed.ShowError("Ensure that the random range of nodes to be plotted is in the format [R1, R2] where R1 and R2 are both integers.");
+                Editor.ShowError("Ensure that the random range of nodes to be plotted is in the format [R1, R2] where R1 and R2 are both integers.");
         }
 
         private void ConnectRandomly_Button(object sender, RoutedEventArgs e)

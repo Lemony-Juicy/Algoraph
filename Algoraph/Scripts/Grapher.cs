@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 
 namespace Algoraph.Scripts
 {
@@ -12,11 +13,65 @@ namespace Algoraph.Scripts
 
         }
 
-
         bool IsTree()
         {
             return this.nodes.Count + 1 == this.arcs.Count;
         }
+
+        #region Saving and Loading
+
+        public void SaveState()
+        {
+            Saver.Save(this.nodes);
+        }
+
+
+
+
+        public bool LoadState() 
+        {
+            GraphStateData? nodeData;
+            try
+            {
+                nodeData = Saver.Load();
+                if (nodeData == null) return false;
+            }
+            catch { return false; }
+
+            Node[] nodes = nodeData.GetNodesArray(ed);
+
+
+            this.nodes.AddRange(nodes);
+
+            foreach(Node n in nodes)
+            {
+                foreach(Arc a in n.arcConnections)
+                {
+                    if (!this.arcs.Contains(a))
+                    {
+                        this.arcs.Add(a);
+                    }
+                }
+            }
+
+
+            foreach(Node n in nodes)
+            {
+                n.AddToCanvas(ed.mainCanvas);
+            }
+
+            foreach(Arc a in arcs)
+            {
+                a.AddToCanvas(ed.mainCanvas);   
+            }
+
+
+            return true;
+        }
+
+        #endregion
+
+        
         
 
         #region Spanning Tree: Prim's + Kruskal's

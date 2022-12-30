@@ -48,7 +48,7 @@ namespace Algoraph.Views
 
             if (inputText.Text.Length > 10 || inputText.Text.Contains(" "))
             {
-                ed.ShowError("Unnacceptable name, please try again with a name less than 10 characters, inculding no spaces");
+                Editor.ShowError("Unnacceptable name, please try again with a name less than 10 characters, inculding no spaces");
                 return;
             }
 
@@ -80,7 +80,10 @@ namespace Algoraph.Views
 
             if (uint.TryParse(inputText.Text, out uint weight))
             {
-                ed.ChangeArcWeights(weight);
+                if (weight > 0)
+                    ed.ChangeArcWeights(weight);
+                else
+                    Editor.ShowError("You cannot have an arc weighting of 0, silly!");
             }
         }
 
