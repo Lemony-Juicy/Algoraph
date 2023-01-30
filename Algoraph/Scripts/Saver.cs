@@ -9,57 +9,70 @@ using System.Windows;
 namespace Algoraph.Scripts
 {
 
+    class NodesArcsTuple
+    {
+        public Arc[] arcs { get; set; }
+        public Node[] nodes { get; set; }
+
+        public NodesArcsTuple(Arc[] arcs, Node[] nodes)
+        {
+            this.arcs = arcs;
+            this.nodes = nodes;
+        }
+    }
+
+
     class GraphStateData
     {
-        public string[] nodeNames { get; set; }
-        public double[][] nodePositions { get; set; }
-        public double[][] adjMat { get; set; }
+        public string[]? nodeNames { get; set; }
+        public double[][]? nodePositions { get; set; }
 
-        public GraphStateData(Node[] nodes) 
+        public string[]? arcNames { get; set; }
+        public uint[]? arcsWeights { get; set; }
+
+        // EG: {["N4", "N5"], ["N2", "N1"], ...}
+        public string[][]? arcConns { get; set; }
+    }
+
+    class GraphStateDataMethods
+    {
+        public static void SetData(Node[] nodes, Arc[] arcs, GraphStateData data)
         {
-            nodeNames = nodes.Select(n => n.name).ToArray();
-            nodePositions = nodes.Select(n => new double[2] { n.GetLocation().X, n.GetLocation().Y }).ToArray();
-            SetAdjMat(nodes);
+            data.nodeNames = nodes.Select(n => n.name).ToArray();
+            data.nodePositions = nodes.Select(n => new double[2] { n.GetLocation().X, n.GetLocation().Y }).ToArray();
+
+            data.arcNames = arcs.Select(a=> a.name).ToArray();
+            data.arcsWeights = arcs.Select(a => a.weight).ToArray();
+            data.arcConns = arcs.Select(a => a.connections.Select(n => n.name).ToArray()).ToArray();
         }
 
-        void SetAdjMat(Node[] nodes)
-        {
-            adjMat = new double[nodes.Length][];
-            for (int i = 0; i < nodes.Length; i++)
-            {
-                List<Node> conns = nodes[i].nodeConnections;
-                double[] matConns = new double[nodes.Length];
-                Array.Fill(matConns, 0);
-                foreach (Node connNode in conns)
-                {
-                    double weight = Grapher.GetConnectingArc(nodes[i], connNode).weight;
-                    matConns[Array.IndexOf(nodes, connNode)] = weight;
-                }
-                adjMat[i] = matConns;
-            }
-        }
 
-        public Node[] GetNodesArray(Editor ed)
+        static public NodesArcsTuple GetNodeArcTuple(Editor ed, GraphStateData data)
         {
-            Node[] nodes = new Node[nodeNames.Length];
-
-            for (int i = 0; nodeNames.Length > 0; i++)
+            Arc[] arcs = new Arc[data.arcNames.Length];
+            Node[] nodes = new Node[data.nodeNames.Length];
+            for (int i = 0; i < data.nodeNames.Length; i++)
             {
+                double[] pos = data.nodePositions[i];
                 nodes[i] = new Node(
                     editor: ed,
-                    location: new Point(nodePositions[i][0], nodePositions[i][1]),
+                    location: new Point(pos[0], pos[1]),
                     connections: new List<Node>());
+                Console.WriteLine(nodes[i].ChangeName(data.nodeNames[i])); 
             }
 
-            for (int i = 0; nodeNames.Length > 0; i++)
+            for (int i = 0; i < data.arcNames.Length; i++)
             {
-                for (int j = 0; j < adjMat[i].Length; j++)
-                {
-                    nodes[j].AddConnection(nodes[i], new Arc(ed, nodes[j], nodes[i], (uint)adjMat[i][j]));
-                }
+                string[] conns = data.arcConns[i];
+                Node n1 = Array.Find(nodes, n => n.name == conns[0]);
+                Node n2 = Array.Find(nodes, n => n.name == conns[1]);
+                Arc arc = new Arc(ed, n1, n2, data.arcsWeights[i]);
+
+                n1.AddConnection(n2, arc);
+                arcs[i] = arc;
             }
 
-            return nodes;
+            return new NodesArcsTuple(arcs, nodes);
         }
     }
 
@@ -67,12 +80,11 @@ namespace Algoraph.Scripts
     {
         public static string? path = null;
 
-        public static void Save(List<Node> nodes)
+        public static void Save(List<Node> nodes, List<Arc> arcs)
         {
-            Console.WriteLine("Initiating save");
-
-            GraphStateData nd = new GraphStateData(nodes.ToArray());
-            string json = JsonSerializer.Serialize(nd);
+            GraphStateData data = new GraphStateData();
+            GraphStateDataMethods.SetData(nodes.ToArray(), arcs.ToArray(), data);
+            string json = JsonSerializer.Serialize(data);
             if (path != null)
             {
                 File.WriteAllText(path, json);
@@ -85,7 +97,6 @@ namespace Algoraph.Scripts
 
         public static GraphStateData? Load()
         {
-
             if (path != null)
             {
                 string jsonString = File.ReadAllText(path);

@@ -42,6 +42,8 @@ namespace Algoraph
 
             this.KeyDown += MainPanel_KeyDown;
             this.KeyUp += MainPanel_KeyUp;
+
+            CursorArrowMode();
         }
 
         #endregion
@@ -206,10 +208,15 @@ namespace Algoraph
 
         public async void Prims()
         {
+            if (grapher.IsFullyConnected()) 
+            { 
+                ShowError("Ensure the graph is fully connected"); 
+                return; 
+            }
+
             if (selectedNodes.nodes.Count == 1)
             {
-                bool done = await grapher.Prims(new List<Node>() { selectedNodes.nodes[0] }, selectedArcs);
-                if (!done) { ShowError("Ensure the graph is fully connected"); return; }
+                await grapher.Prims(new List<Node>() { selectedNodes.nodes[0] }, selectedArcs);
                 selectedNodes.ClearItems();
                 MessageBox.Show("- The spanning tree is highlighted in Orange." +
                     "\n- The arcs NOT in Orange can be deleted" +
@@ -226,6 +233,12 @@ namespace Algoraph
 
         public void DijkstrasPath()
         {
+            if (!grapher.IsFullyConnected()) 
+            { 
+                ShowError("Ensure graph is fully connected, silly"); 
+                return; 
+            }
+
             if (selectedNodes.nodes.Count != 2)
             {
                 ShowError("Please select a starting node and an end node to find the shortest path.");
@@ -236,11 +249,11 @@ namespace Algoraph
             Node endNode = selectedNodes.nodes[1];
             selectedNodes.ClearItems();
 
-            Node[]? backTrackNodes = grapher.DijkstrasInfo(startNode, out uint[] weighting, endNode, selectedArcs);
-            if (backTrackNodes == null) { ShowError("Ensure the graph is fully connected"); return; }
+            grapher.DijkstrasInfo(startNode, out uint[] weighting, endNode, selectedArcs);
 
             int indexOfWeight = grapher.nodes.IndexOf(endNode);
             uint minTotalWeight = weighting[indexOfWeight];
+
             MessageBox.Show($"The path has been highlighted in purple\n" +
                 $"Total weighting: {minTotalWeight}", 
                 "Dijkstra's Information", 
@@ -249,6 +262,11 @@ namespace Algoraph
 
             UpdateNodePanel();
 
+        }
+
+        public bool IsFullyConnected()
+        {
+            return grapher.IsFullyConnected();
         }
 
         public void ClearGraph(bool? warning=true)
@@ -400,11 +418,10 @@ namespace Algoraph
                 fileDialogue.DefaultExt = ".json";
                 fileDialogue.Filter = "JSON files (*.json)|*.json";
                 fileDialogue.CheckFileExists = false;
-                if (fileDialogue.ShowDialog() == true)
-                {
-                    Console.WriteLine(fileDialogue.FileName);
+
+                // When user clicks ok button
+                if (fileDialogue.ShowDialog() == true) 
                     Saver.path = fileDialogue.FileName;
-                }
             }
 
             grapher.SaveState(); 

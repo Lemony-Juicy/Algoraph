@@ -110,7 +110,7 @@
                     <Button 
                         Foreground="LightGoldenrodYellow"
                         HorizontalAlignment="Stretch"
-                        Click="DijkstrasInfo_Button"
+                        Click="Dijkstras_Button"
                         Style="{StaticResource Button}"
                         FontFamily="consolas"
                         Background="{StaticResource PurpleGradient}"
@@ -121,12 +121,12 @@
                     <Button 
                         Foreground="LightGoldenrodYellow"
                         HorizontalAlignment="Stretch"
-                        Click="DijkstrasInfo_Button"
+                        Click="IsFullyConnected"
                         Style="{StaticResource Button}"
                         FontFamily="consolas"
                         Background="{StaticResource PurpleGradient}"
                         Height="50">
-                        Dijkstra's Algorithm (Information)
+                        Is Fully Connected
                     </Button>
 
 

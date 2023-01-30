@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace Algoraph.Views
@@ -36,7 +37,6 @@ namespace Algoraph.Views
         }
 
         #region Events for Methods.xaml
-        // -------------------------- Method.xaml Events -------------------------- //
 
         private void AutoClear_Checked(object sender, RoutedEventArgs e)
         {
@@ -88,9 +88,15 @@ namespace Algoraph.Views
             ed.Prims();
         }        
         
-        private void DijkstrasInfo_Button(object sender, RoutedEventArgs e)
+        private void Dijkstras_Button(object sender, RoutedEventArgs e)
         {
             ed.DijkstrasPath();
+        }
+
+
+        private void IsFullyConnected(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine(ed.IsFullyConnected());
         }
 
 
@@ -99,7 +105,6 @@ namespace Algoraph.Views
             ed.ClearGraph(warning: !autoClear.IsChecked);
         }
 
-        // -------------------------- Method.xaml Events -------------------------- //
         #endregion
     }
 }

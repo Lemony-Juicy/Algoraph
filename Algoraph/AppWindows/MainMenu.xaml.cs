@@ -40,7 +40,6 @@ namespace Algoraph
             {
                 Saver.path = fileDialogue.FileName;
                 editor = new Editor();
-                editor.Show();
 
                 if (!editor.LoadState())
                 {
@@ -50,7 +49,8 @@ namespace Algoraph
                 }
                 else
                 {
-                    Close();
+                    this.Close();
+                    editor.Show();
                 }
             }
         }
