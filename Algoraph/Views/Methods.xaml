@@ -41,7 +41,7 @@
                             Click="CreateOrdered_Button"
                             Style="{StaticResource Button}"
                             FontFamily="consolas"
-                            Background="{StaticResource GreenGradient}" 
+                            Background="{StaticResource DryGreenGradient}" 
                             Height="50" Width="200">
                             Create Ordered Nodes
                         </Button>
@@ -61,7 +61,7 @@
                             Click="CreateRandom_Button"
                             Style="{StaticResource Button}"
                             FontFamily="consolas"
-                            Background="{StaticResource GreenGradient}" 
+                            Background="{StaticResource DryGreenGradient}" 
                             Height="50" Width="200">
                             Create Random Nodes
                         </Button>
@@ -110,7 +110,7 @@
                     <Button 
                         Foreground="LightGoldenrodYellow"
                         HorizontalAlignment="Stretch"
-                        Click="DijkstrasInfo_Button"
+                        Click="Dijkstras_Button"
                         Style="{StaticResource Button}"
                         FontFamily="consolas"
                         Background="{StaticResource PurpleGradient}"
@@ -121,12 +121,12 @@
                     <Button 
                         Foreground="LightGoldenrodYellow"
                         HorizontalAlignment="Stretch"
-                        Click="DijkstrasInfo_Button"
+                        Click="IsFullyConnected"
                         Style="{StaticResource Button}"
                         FontFamily="consolas"
                         Background="{StaticResource PurpleGradient}"
                         Height="50">
-                        Dijkstra's Algorithm (Information)
+                        Is Fully Connected
                     </Button>
 
 

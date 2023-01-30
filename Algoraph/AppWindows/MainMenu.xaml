@@ -11,6 +11,7 @@
             <StackPanel Margin="30">
                 <Button 
                     Click="CreateNew_Button"
+                    Foreground="White"
                     Background="{StaticResource GreenGradient}"
                     Style="{StaticResource Button}" 
                     FontFamily="Bahnschrift"
@@ -22,6 +23,7 @@
 
                 <Button 
                     Click="LoadProject_Button"
+                    Foreground="Khaki"
                     Background="{StaticResource DryGreenGradient}"
                     Style="{StaticResource Button}" 
                     FontFamily="Bahnschrift"

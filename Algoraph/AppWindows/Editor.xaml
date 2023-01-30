@@ -51,17 +51,34 @@
                 <Canvas Margin="35,25,15,15" x:Name="mainCanvas"/>
             </Grid>
 
-            <Button 
-                Foreground="White"
-                Click="ButtonBackToMenu"
-                Style="{StaticResource Button}"
-                Background="{StaticResource OrangeGradient}"
-                FontFamily="Bahnschrift"
-                FontSize="40"
-                Grid.Column="1" Width="220">
-                AlgoRaph
-            </Button>
+            <StackPanel 
+                HorizontalAlignment="Center"
+                Orientation="Horizontal"
+                Grid.Column="1">
+                
+                <Button 
+                    Foreground="White"
+                    Click="ButtonBackToMenu"
+                    Style="{StaticResource Button}"
+                    Background="{StaticResource OrangeGradient}"
+                    FontFamily="Bahnschrift"
+                    FontSize="40"
+                    Width="220">
+                    AlgoRaph
+                </Button>
 
+                <Button 
+                    Foreground="White"
+                    Click="SaveStateButton"
+                    Style="{StaticResource Button}"
+                    Background="{StaticResource DryGreenGradient}"
+                    FontFamily="Bahnschrift"
+                    FontSize="40"
+                    Width="220">
+                    Save State
+                </Button>
+
+            </StackPanel>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Width="200">
                 <TextBlock x:Name="debugText" Foreground="White"></TextBlock>

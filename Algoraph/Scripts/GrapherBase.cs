@@ -67,7 +67,7 @@ namespace Algoraph.Scripts
             RemoveArc(arc);
         }
 
-        public Arc? GetConnectingArc(Node node1, Node node2)
+        public static Arc? GetConnectingArc(Node node1, Node node2)
         {
             foreach (Arc arc1 in node1.arcConnections)
             {
