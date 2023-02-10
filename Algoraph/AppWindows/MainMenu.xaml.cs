@@ -1,18 +1,6 @@
-﻿using Algoraph.Scripts;
-using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.Win32;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+
 
 namespace Algoraph
 {
@@ -30,28 +18,43 @@ namespace Algoraph
             Close();
         }
 
-        private void LoadProject_Button(object sender, RoutedEventArgs e)
+        public static bool OpenProject()
         {
-            Editor editor;
             OpenFileDialog fileDialogue = new OpenFileDialog();
+            fileDialogue.Title = "Open Algoraph Project";
+            fileDialogue.Multiselect = false;
+
             fileDialogue.DefaultExt = ".json";
             fileDialogue.Filter = "JSON files (*.json)|*.json";
+
+            // If user clicks OK button
             if (fileDialogue.ShowDialog() == true)
             {
-                Saver.path = fileDialogue.FileName;
-                editor = new Editor();
+                Editor editor = new Editor();
+                editor.path = fileDialogue.FileName;
 
                 if (!editor.LoadState())
                 {
                     editor.Close();
                     Editor.ShowError("Oh no! This file is not able to be decoded into graph data :(\n" +
                         "Ensure that the json file selected contains the right data to be loaded.");
+                    return false;
                 }
                 else
                 {
-                    this.Close();
+                    editor.Title = fileDialogue.SafeFileName;
                     editor.Show();
+                    return true;
                 }
+            }
+            return false;
+        }
+
+        private void LoadProject_Button(object sender, RoutedEventArgs e)
+        {
+            if (OpenProject() == true)
+            {
+                this.Close();
             }
         }
     }

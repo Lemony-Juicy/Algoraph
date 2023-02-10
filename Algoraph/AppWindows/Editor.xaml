@@ -5,127 +5,202 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Algoraph"
         mc:Ignorable="d"
-        Title="" Height="600" Width="900"
+        Closing="Window_Closing"
+        Title="New Project *" Height="600" Width="900"
         MinHeight="550" MinWidth="850" Icon="/Images/Icon.png">
     
+
     <Grid 
         Background="{StaticResource MainBackground}"
         MouseMove="Main_MouseMove"
         MouseDown="Main_MouseDown"
         MouseUp="Main_MouseUp">
-        
-        <Grid 
+
+        <DockPanel >
+            <ToolBarTray DockPanel.Dock="Top" Background="{StaticResource CanvasBackground}">
+                <ToolBar Background="{StaticResource CanvasBackground}" Height="30">
+                    <Button Background="{StaticResource CanvasBackground}" Click="NewProjectButton" Content="New"
+                            FontSize="14"
+                            Foreground="LightGray"
+                            FontFamily="Rockwell"/>
+                    <Button Background="{StaticResource CanvasBackground}" Click="OpenProjectButton" Content="Open" 
+                            FontSize="14"
+                            Foreground="LightGray"
+                            FontFamily="Rockwell"/>
+                    <Button Background="{StaticResource CanvasBackground}" Click="ButtonBackToMenu" Content="Menu" 
+                            FontSize="14"
+                            Foreground="LightGray"
+                            FontFamily="Rockwell"/>
+                    <Button Background="{StaticResource CanvasBackground}" Click="SaveStateButton" Content="Save"
+                            FontSize="14"
+                            Foreground="LightGray"
+                            FontFamily="Rockwell"/>
+                </ToolBar>
+            </ToolBarTray>
+            <Grid 
             Margin="5,5,0,0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="310"/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="75"/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="310"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="75"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
 
-            <Grid 
-                IsHitTestVisible="False"
-                Grid.Row="1"
-                Grid.Column="1">
-                <Border
-                    Margin="20,10,0,0"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    CornerRadius="15"
-                    Background="{StaticResource CanvasBackground}">
-                </Border>
-            </Grid>
-
-            <Grid 
-                Grid.Column="1" 
-                Grid.Row="1">
-                <Border  
-                    x:Name="mainPanel"
-                    MouseLeftButtonUp="MainPanel_LeftMouseUp"
-                    Margin="35,25,15,15"
-                    CornerRadius="15"
-                    Background="{StaticResource CanvasBackground}">
-                </Border>
-                <Canvas Margin="35,25,15,15" x:Name="mainCanvas"/>
-            </Grid>
-
-            <StackPanel 
-                HorizontalAlignment="Center"
-                Orientation="Horizontal"
-                Grid.Column="1">
-                
-                <Button 
-                    Foreground="White"
-                    Click="ButtonBackToMenu"
-                    Style="{StaticResource Button}"
-                    Background="{StaticResource OrangeGradient}"
-                    FontFamily="Bahnschrift"
-                    FontSize="40"
-                    Width="220">
-                    AlgoRaph
-                </Button>
-
-                <Button 
-                    Foreground="White"
-                    Click="SaveStateButton"
-                    Style="{StaticResource Button}"
-                    Background="{StaticResource DryGreenGradient}"
-                    FontFamily="Bahnschrift"
-                    FontSize="40"
-                    Width="220">
-                    Save State
-                </Button>
-
-            </StackPanel>
-
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Width="200">
-                <TextBlock x:Name="debugText" Foreground="White"></TextBlock>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*"/>
-                        <ColumnDefinition Width="1*"/>
-                    </Grid.ColumnDefinitions>
-
-                    <RadioButton
-                        Checked="ToggleView_Click"
-                        x:Name="graphDataButton"
-                        FontFamily="BahnSchrift"
-                        Background="{StaticResource BlueGradient}"
-                        Style="{StaticResource ToggleButton}"
-                        Width="100"
-                        Height="70"
-                        VerticalAlignment="Bottom"
-                        HorizontalAlignment="Center">
-                        Graph Data
-                    </RadioButton>
-                    <Image IsHitTestVisible="False" Source="/Images/NetworkGraph.png" Margin="16,10,16,18"/>
-
-                    <RadioButton
-                        Checked="ToggleView_Click"
-                        x:Name="methodsButton"   
-                        IsChecked="True"
-                        FontFamily="BahnSchrift"
-                        Grid.Column="1"
-                        Background="{StaticResource BlueGradient}"
-                        Style="{StaticResource ToggleButton}"
-                        Width="100"
-                        Height="70"
-                        VerticalAlignment="Bottom"
-                        HorizontalAlignment="Center">
-                        Methods
-                    </RadioButton>
-                    <Image IsHitTestVisible="False" Grid.Column="1" Source="/Images/Method.png" Margin="16,10,16,18"/>
+                <Grid 
+                    IsHitTestVisible="False"
+                    Grid.Row="1"
+                    Grid.Column="1">
+                    <Border
+                            Margin="20,10,0,0"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            CornerRadius="5"
+                            Background="{StaticResource CanvasBackground}">
+                    </Border>
                 </Grid>
-            </StackPanel>
 
-            <ContentControl 
+                <Grid 
+                    Grid.Column="1" 
+                    Grid.Row="1">
+                    <Border  
+                        x:Name="mainPanel"
+                        MouseLeftButtonUp="MainPanel_LeftMouseUp"
+                        Margin="35,25,15,15"
+                        CornerRadius="10"
+                    Background="{StaticResource CanvasBackground}">
+                    </Border>
+                    <Canvas Margin="35,25,15,15" x:Name="mainCanvas"/>
+                </Grid>
+
+                <StackPanel
+                    Margin="50,0,0,0"
+                    HorizontalAlignment="Left"
+                    Orientation="Horizontal"
+                    Grid.Column="1">
+                    <StackPanel Width="300">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <RadioButton
+                                Checked="SteppedInterval_Checked"
+                                IsChecked="True"
+                                FontFamily="BahnSchrift"
+                                Grid.Column="1"
+                                Background="{StaticResource OrangeGradient}"
+                                Style="{StaticResource ToggleButton}"
+                                Width="125"
+                                Height="40"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center">
+                                Stepped Intervals
+                            </RadioButton>
+                            <RadioButton
+                                Checked="AutoInterval_Checked"
+                                IsChecked="True"
+                                FontFamily="BahnSchrift"
+                                Grid.Column="1"
+                                Background="{StaticResource OrangeGradient}"
+                                Style="{StaticResource ToggleButton}"
+                                Width="125"
+                                Height="40"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center">
+                                Auto Delayed Intervals
+                            </RadioButton>
+                        </StackPanel>
+
+                        <Button 
+                            Visibility="Collapsed"
+                            Height="40"
+                            Width="200"
+                            Click="SteppedInterval_Click"
+                            x:Name="steppedIntervalButton"
+                            FontFamily="Bahnschrift"
+                            Foreground="White"
+                            Style="{StaticResource Button}"
+                            Background="{StaticResource DryGreenGradient}">
+                            Next Step
+                        </Button>
+
+                            <StackPanel x:Name="delayedIntervalPanel" Visibility="Visible">
+                            <TextBlock
+                                x:Name="delayTextBlock"
+                                FontSize="15"
+                                Width="120"
+                                TextAlignment="Center"
+                                VerticalAlignment="Bottom"
+                                HorizontalAlignment="Center"
+                                TextWrapping="WrapWithOverflow" FontFamily="Bahnschrift" 
+                                 Foreground="{StaticResource OrangeGradient}">
+                                0.3 seconds
+                            </TextBlock>
+
+                            <Slider 
+                                x:Name="speedSlider"
+                                ValueChanged="speedSlider_ValueChanged"
+                                Width="300"
+                                VerticalAlignment="Bottom"
+                                Minimum="0"
+                                Maximum="7.5"
+                                Value="0.3"/>
+                        </StackPanel>
+                    </StackPanel>
+
+
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Width="310">
+
+                    <Grid Width="310">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <RadioButton
+                            Checked="ToggleView_Click"
+                            x:Name="graphDataButton"
+                            FontFamily="BahnSchrift"
+                            Background="{StaticResource BlueGradient}"
+                            Style="{StaticResource ToggleButton}"
+                            Width="125"
+                            Height="50"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center" 
+                            Margin="0,45,0,0">
+                            Graph Data
+                        </RadioButton>
+
+                        <Image IsHitTestVisible="False" Source="/Images/NetworkGraph.png" Margin="15,49,91,5"/>
+
+                        <RadioButton
+                                Checked="ToggleView_Click"
+                                x:Name="methodsButton"   
+                                IsChecked="True"
+                                FontFamily="BahnSchrift"
+                                Grid.Column="1"
+                                Background="{StaticResource BlueGradient}"
+                                Style="{StaticResource ToggleButton}"
+                                Width="125"
+                                Height="50"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center" 
+                                Margin="0,45,0,0">
+                            Methods
+                        </RadioButton>
+                        <Image IsHitTestVisible="False" Source="/Images/Method.png" Margin="25,50,92,5" Grid.Column="1"/>
+                    </Grid>
+                </StackPanel>
+
+                <ContentControl 
                 x:Name="sidePanel"
                 Grid.Row="1"
                 Grid.Column="0">
 
-            </ContentControl>
-        </Grid>
+                </ContentControl>
+            </Grid>
+        </DockPanel>
+
+
     </Grid>
 </Window>

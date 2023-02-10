@@ -2,16 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
-using System.Windows.Shapes;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Controls.Primitives;
 
 namespace Algoraph.Scripts
 {
-    // THE ELLIPSE HAS ITS LOCATION BASED ON ITS TOP LEFT CORNER (RECT)!!
     internal class Node
     {
         private static string currentName = "N1";
@@ -23,12 +20,12 @@ namespace Algoraph.Scripts
         private Point location;
         public ToggleButton nodeButton { get; private set; }
 
-        public Node(Editor editor, Point location, List<Node>? connections = null)
+        public Node(Editor editor, Point location, List<Node>? connections = null, string name = "")
         {
             this.nodeConnections = connections ?? new List<Node>();
             this.arcConnections = new List<Arc>();
 
-            object s = Application.Current.FindResource("nodeUI");
+            object s = editor.FindResource("nodeUI");
             this.nodeButton = new ToggleButton()
             {
                 Style = (Style)s,
@@ -36,10 +33,17 @@ namespace Algoraph.Scripts
                 MinWidth = Node.radius * 2
             };
 
-            SetLocation(location.X, location.Y);
-            this.name = currentName;
-            this.nodeButton.Name = currentName;
+            if (name != "")
+            {
+                this.ChangeName(name);
+            }
+            else
+            {
+                this.name = currentName;
+                this.nodeButton.Name = currentName;
+            }
 
+            SetLocation(location.X, location.Y);
             this.nodeButton.Checked += editor.Node_Checked;
             this.nodeButton.Unchecked += editor.Node_Unchecked;
             this.nodeButton.MouseEnter += editor.Node_Enter;
@@ -51,7 +55,7 @@ namespace Algoraph.Scripts
 
         public Point GetLocation()
         {
-            return Point.Add(location, new Vector(50-radius, 50-radius));
+            return Point.Add(location, new Vector(50, 50));
         }
 
         public void Uncheck()

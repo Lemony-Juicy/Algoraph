@@ -86,17 +86,27 @@ namespace Algoraph.Views
         private void Prims_Button(object sender, RoutedEventArgs e)
         {
             ed.Prims();
-        }        
-        
+        }
+
+        private void Kruskals_Button(object sender, RoutedEventArgs e)
+        {
+            ed.Kruskals();
+        }
+
         private void Dijkstras_Button(object sender, RoutedEventArgs e)
         {
             ed.DijkstrasPath();
         }
 
-
-        private void IsFullyConnected(object sender, RoutedEventArgs e)
+        private void RouteInspection_Button(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine(ed.IsFullyConnected());
+            ed.RouteInspection();
+        }
+
+
+        private void CreateRandomTree(object sender, RoutedEventArgs e)
+        {
+            ed.CreateRandomTree();
         }
 
 

@@ -1,7 +1,10 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Linq;
+using Algoraph.Scripts.Saving_and_Loading;
 
 namespace Algoraph.Scripts
 {
@@ -14,26 +17,30 @@ namespace Algoraph.Scripts
 
         #region Saving and Loading
 
-        public void SaveState()
+        public void SaveState(string path)
         {
-            Saver.Save(this.nodes, this.arcs);
+            string jsonString = Saver.GetJsonData(this.nodes, this.arcs);
+            Saver.SaveJsonData(jsonString, path);
         }
 
 
-        public bool LoadState() 
+        public bool LoadState(string? path = null, string? jsonString = null) 
         {
-            GraphStateData? data;
-            NodesArcsTuple tuple;
-            try // Try to load the data. If not possible, Let user know that this file is not supported
-            {
-                data = Saver.Load();
-                if (data == null) return false;
-                tuple = GraphStateDataMethods.GetNodeArcTuple(ed, data);
-            }
-            catch { return false; }
+            Node[]? nodes; 
+            Arc[]? arcs;
 
-            Node[] nodes = tuple.nodes;
-            Arc[] arcs = tuple.arcs;    
+            
+
+            // Try to load the data. If not possible, Let user know that this file is not supported
+            try
+            {
+                if (jsonString == null && path != null)
+                    jsonString = Saver.LoadJsonData(path);             
+
+                if (!Saver.LoadNodesArcs(ed, jsonString, out arcs, out nodes))
+                    return false;
+            }
+            catch { return false; }  
 
             this.nodes.AddRange(nodes);
             this.arcs.AddRange(arcs);
@@ -108,7 +115,7 @@ namespace Algoraph.Scripts
             foreach(Arc arc in usedArcs) 
             {
                 selectedArcs.AddItem(arc);
-                await Task.Delay(2000);
+                await ed.WaitForNextCycle();
             }
             return true;
         }
@@ -130,6 +137,15 @@ namespace Algoraph.Scripts
             await Prims(connector, selectedArcs, usedArcs);
         }
 
+        public async Task Kruskals(SelectedArcs selectedArcs)
+        {
+            // Essentially finding the minimum arc, and then performing prim's algorithm on it.
+            uint minArcWeight = this.arcs.Min(a => a.weight);
+            Arc minArc = this.arcs.Find(a => a.weight == minArcWeight);
+
+            await Prims(minArc.connections.ToList(), selectedArcs, new List<Arc> { minArc});
+        }
+
         #endregion
 
         #region Dijkstra’s Algorithm
@@ -141,14 +157,15 @@ namespace Algoraph.Scripts
         /// <param name="currentNode"></param>
         /// <param name="previous"></param>
         /// <param name="selectedArcs"></param>
-        private void BackTrackTrace(Node startNode, Node currentNode, Node[] previous, SelectedArcs selectedArcs)
+        public async Task BackTrackTrace(Node startNode, Node currentNode, Node[] previous, SelectedArcs selectedArcs)
         {
             if (currentNode == startNode) return;
             Arc? nextArc = currentNode.arcConnections.Find(a
                 => a.GetConnectedNode(currentNode) == previous[this.nodes.IndexOf(currentNode)]);
             selectedArcs.AddItem(nextArc);
             if (nextArc == null) return;
-            BackTrackTrace(startNode, nextArc.GetConnectedNode(currentNode), previous, selectedArcs);
+            await ed.WaitForNextCycle();
+            await BackTrackTrace(startNode, nextArc.GetConnectedNode(currentNode), previous, selectedArcs);
         }
 
 
@@ -161,7 +178,7 @@ namespace Algoraph.Scripts
         /// <param name="endNode">The end node to backtrace. If this is null, no backtracing will take place.</param>
         /// <param name="selectedArcs">The selectedarcs object so arcs can be selected if backtracing in the editor</param>
         /// <returns></returns>
-        public Node[]? DijkstrasInfo(Node startNode, out uint[] weighting, Node? endNode = null, SelectedArcs? selectedArcs = null)
+        public Node[]? DijkstrasInfo(Node startNode, out uint[] weighting)
         {
             int nodeCount = this.nodes.Count;
 
@@ -176,9 +193,6 @@ namespace Algoraph.Scripts
             weightsFromTarget[targetIndex] = 0;
 
             Node[]? dkInfo = DijkstrasRecursive(startNode, weightsFromTarget, previous, unvisitedIndexes);
-            if (endNode != null && selectedArcs != null)
-                BackTrackTrace(startNode, endNode, previous, selectedArcs);
-            
             weighting = weightsFromTarget;
             return dkInfo;
         }
@@ -214,6 +228,80 @@ namespace Algoraph.Scripts
 
             Node nextTargetNode = this.nodes[minWeightUnvisitedIndex];
             return DijkstrasRecursive(nextTargetNode, weightsFromTarget, previous, unvisitedIndexes);
+        }
+
+        #endregion
+
+        #region Route Inspection
+
+        Node[] GetOddNodes()
+        {
+            return (from node in nodes 
+                    where node.nodeConnections.Count % 2 == 1 
+                    select node).ToArray();
+        }
+
+        public async Task<uint> RouteInspection(SelectedArcs selectedArcs)
+        {
+            uint totalWeight = 0;
+            foreach(Arc a in this.arcs)
+                totalWeight += a.weight;
+
+            Node[] n = GetOddNodes();
+            
+            if (n.Length == 0)  // Eulerian
+            {
+                return totalWeight;
+            }
+            if (n.Length == 2)  // Semi Eulerian
+            {
+                Node[] previous = DijkstrasInfo(n[0], out uint[] weighting);
+                await BackTrackTrace(n[0], n[1], previous, selectedArcs);
+                return totalWeight + weighting[this.nodes.IndexOf(n[1])];
+            }
+            if (n.Length == 4)
+            {
+                Node[] previous1 = DijkstrasInfo(n[0], out uint[] a);
+                uint ab = a[1];
+                uint ac = a[2];
+                uint ad = a[3];
+                Node[] previous2 = DijkstrasInfo(n[1], out uint[] b);
+                uint bc = b[2];
+                uint bd = b[3];
+                Node[] previous3 = DijkstrasInfo(n[2], out uint[] c);
+                uint cd = c[3];
+                uint[][] pairings = new uint[][] 
+                { 
+                    new uint[2] {ab, cd},
+                    new uint[2] {ad, bc},
+                    new uint[2] {ac, bd},
+                };
+
+                Node[][] previouses = new Node[][]
+                {
+                    previous1, previous3, previous1, previous2, previous1, previous2
+                };
+
+                Node[][] node_pairings = new Node[][]
+                {
+                    new Node[] {n[0], n[1]},
+                    new Node[] {n[2], n[3]},
+
+                    new Node[] {n[0], n[3]},
+                    new Node[] {n[1], n[2]},
+
+                    new Node[] {n[0], n[2]},
+                    new Node[] {n[1], n[3]},
+                };
+                uint[] minWeight = pairings.MinBy(x => x[0] + x[1]);
+                int index = (Array.IndexOf(pairings, minWeight)+1)*2-1;
+                Node[] np1 = node_pairings[index];
+                await BackTrackTrace(np1[0], np1[1], previouses[index], selectedArcs);
+                Node[] np2 = node_pairings[index-1];
+                await BackTrackTrace(np2[0], np2[1], previouses[index-1], selectedArcs);
+                return minWeight[0] + minWeight[1] + totalWeight;
+            }
+            return 0;
         }
 
         #endregion

@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Windows.Input;
-using Windows.Foundation.Diagnostics;
 
 namespace Algoraph.Scripts
 {

@@ -97,11 +97,40 @@ namespace Algoraph.Scripts
             }
         }
 
+        List<int> GetRemainingNodeIndices(List<int> used)
+        {
+            List<int> remaining = new List<int>();
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                if (!used.Contains(i))
+                    remaining.Add(i);
+            }
+            return remaining;
+        }
+
+        public void CreateRandomTree()
+        {
+            if (nodes.Count == 0) return;
+            ClearArcs();
+
+            List<int> used = new List<int>();
+            for (int i = 0; i < nodes.Count - 1; i++)
+            {
+                if (!used.Contains(i))
+                {
+                    used.Add(i);
+                    List<int> remaining = GetRemainingNodeIndices(used);
+                    //if (remaining.Count == 0) return;
+                    Node nodeToConnect = nodes[remaining[CustomExtentions.random.Next(0, remaining.Count)]];
+                    Connect(nodes[i], nodeToConnect, (uint)CustomExtentions.random.Next(1, 100));
+                }
+            }
+        }
+
         public void RandomConnections()
         {
             /* This generates random arcs in the graph */
-            if (nodes.Count == 0) return;
-            ClearArcs();
+            CreateRandomTree(); 
 
             for (int i = 0; i < nodes.Count; i++)
             {
@@ -109,7 +138,7 @@ namespace Algoraph.Scripts
                 {
                     // The (i-1) != j bit is to prevent arcs from the two point repeating
                     // EG: node A and B and B and A.
-                    if (i != j && (i - 1) != j && CustomExtentions.random.Next(1, 5) == 2)
+                    if (i != j && (i - 1) != j && CustomExtentions.random.Next(1, 7) == 2 && !nodes[i].nodeConnections.Contains(nodes[j]))
                         Connect(nodes[i], nodes[j], (uint)CustomExtentions.random.Next(1, 100));
                 }
             }

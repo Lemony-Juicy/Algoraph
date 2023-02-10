@@ -88,15 +88,5 @@ namespace Algoraph.Views
         }
 
         #endregion
-
-        private void adjDataGrid_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter)
-            {
-                DataGrid dataGrid = (DataGrid)sender;
-                NodeInfoTable[] newInfo = (NodeInfoTable[])dataGrid.ItemsSource;
-                ed.UserChangeGraph(newInfo);
-            }
-        }
     }
 }
