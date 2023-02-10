@@ -55,7 +55,7 @@
                                     Text="{TemplateBinding Content}"/>
                             </Border>
 
-                            <Border CornerRadius="4" Margin="5" x:Name="borderShade" Background="Black" Opacity="0"/>
+                            <Border CornerRadius="4" IsHitTestVisible="False" Margin="5" x:Name="borderShade" Background="Black" Opacity="0.5"/>
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
@@ -63,6 +63,9 @@
                                 <Setter TargetName="borderShade" Property="Opacity" Value="0.3"/>
                             </Trigger>
                             <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="borderShade" Property="Opacity" Value="0"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="False">
                                 <Setter TargetName="borderShade" Property="Opacity" Value="0.5"/>
                             </Trigger>
                         </ControlTemplate.Triggers>

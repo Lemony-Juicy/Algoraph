@@ -12,9 +12,9 @@
 
 
     <Border
-        CornerRadius="15"      
+        CornerRadius="5"      
         Background="{StaticResource DarkGradient}"
-        Margin="0,10,0,0">
+        Margin="0,0,0,0">
         <Grid>
             <ScrollViewer>
                 <StackPanel Margin="5" Orientation="Vertical">
@@ -88,6 +88,17 @@
                     <Button 
                         Foreground="White"
                         HorizontalAlignment="Stretch"
+                        Click="CreateRandomTree"
+                        Style="{StaticResource Button}"
+                        FontFamily="consolas"
+                        Background="{StaticResource OrangeGradient}"
+                        Height="50">
+                        Create Random Tree
+                    </Button>
+
+                    <Button 
+                        Foreground="White"
+                        HorizontalAlignment="Stretch"
                         Click="CreateComplete_Button"
                         Style="{StaticResource Button}"
                         FontFamily="consolas"
@@ -96,7 +107,9 @@
                         Create Complete Graph
                     </Button>
 
-                    <Button 
+
+                    <Button
+                        Margin="0,10,0,0"
                         Foreground="LightGoldenrodYellow"
                         HorizontalAlignment="Stretch"
                         Click="Prims_Button"
@@ -105,6 +118,17 @@
                         Background="{StaticResource PurpleGradient}"
                         Height="50">
                         Prim's Algorithm
+                    </Button>
+
+                    <Button
+                        Foreground="LightGoldenrodYellow"
+                        HorizontalAlignment="Stretch"
+                        Click="Kruskals_Button"
+                        Style="{StaticResource Button}"
+                        FontFamily="consolas"
+                        Background="{StaticResource PurpleGradient}"
+                        Height="50">
+                        Kruskal's Algorithm
                     </Button>
 
                     <Button 
@@ -121,12 +145,12 @@
                     <Button 
                         Foreground="LightGoldenrodYellow"
                         HorizontalAlignment="Stretch"
-                        Click="IsFullyConnected"
+                        Click="RouteInspection_Button"
                         Style="{StaticResource Button}"
                         FontFamily="consolas"
                         Background="{StaticResource PurpleGradient}"
                         Height="50">
-                        Is Fully Connected
+                        Route Inspection
                     </Button>
 
 

@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
-using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows;
 using System.Windows.Controls.Primitives;
@@ -24,7 +19,7 @@ namespace Algoraph.Scripts
         private ToggleButton arcButton;
         public Label weightLabel { get; private set; }
 
-        public Arc(Editor editor, Node node1, Node node2, uint weight = 1)
+        public Arc(Editor editor, Node node1, Node node2, uint weight = 1, string name = "")
         {
             object s = Application.Current.FindResource("arcUI");
             this.arcButton = new ToggleButton { Style = s as Style };
@@ -37,8 +32,16 @@ namespace Algoraph.Scripts
             };
             ConnectLine(node1, node2, weight);
 
-            this.name = currentName;
-            this.arcButton.Name = currentName;
+            if (name != "")
+            {
+                this.name = name;
+                this.arcButton.Name = name;
+            }
+            else
+            {
+                this.name = currentName;
+                this.arcButton.Name = currentName;
+            }
 
             this.arcButton.MouseEnter += editor.Arc_Enter;
             this.arcButton.MouseLeave += editor.Arc_Leave;
@@ -127,15 +130,16 @@ namespace Algoraph.Scripts
         public void UpdateArc(uint weight)
         {
             this.weight = weight;
-
+           
             Line arcLine = (Line)arcButton.Template.FindName("arcLine", arcButton);
             // Assigning the position of first node
-            arcLine.X1 = connections[0].GetLocation().X + Node.radius;
-            arcLine.Y1 = connections[0].GetLocation().Y + Node.radius;
+
+            arcLine.X1 = connections[0].GetLocation().X;
+            arcLine.Y1 = connections[0].GetLocation().Y;
 
             // Assigning the position of second node
-            arcLine.X2 = connections[1].GetLocation().X + Node.radius;
-            arcLine.Y2 = connections[1].GetLocation().Y + Node.radius;
+            arcLine.X2 = connections[1].GetLocation().X;
+            arcLine.Y2 = connections[1].GetLocation().Y;
 
             // Adding weight label relative to the line position
             weightLabel.Content = weight.ToString();
