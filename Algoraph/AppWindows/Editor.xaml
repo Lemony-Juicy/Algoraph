@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:Algoraph"
         mc:Ignorable="d"
         Closing="Window_Closing"
+        WindowState="Maximized"
         Title="New Project *" Height="600" Width="900"
         MinHeight="550" MinWidth="850" Icon="/Images/Icon.png">
     
@@ -16,24 +17,29 @@
         MouseDown="Main_MouseDown"
         MouseUp="Main_MouseUp">
 
-        <DockPanel >
+        <DockPanel>
             <ToolBarTray DockPanel.Dock="Top" Background="{StaticResource CanvasBackground}">
                 <ToolBar Background="{StaticResource CanvasBackground}" Height="30">
                     <Button Background="{StaticResource CanvasBackground}" Click="NewProjectButton" Content="New"
                             FontSize="14"
-                            Foreground="LightGray"
+                            Foreground="Gray"
                             FontFamily="Rockwell"/>
-                    <Button Background="{StaticResource CanvasBackground}" Click="OpenProjectButton" Content="Open" 
+                    <Button Background="{StaticResource CanvasBackground}" Click="OpenProjectButton" Content="  Open" 
                             FontSize="14"
-                            Foreground="LightGray"
+                            Foreground="Gray"
                             FontFamily="Rockwell"/>
-                    <Button Background="{StaticResource CanvasBackground}" Click="ButtonBackToMenu" Content="Menu" 
+                    <Button Background="{StaticResource CanvasBackground}" Click="ButtonBackToMenu" Content="  Menu" 
                             FontSize="14"
-                            Foreground="LightGray"
+                            Foreground="Gray"
                             FontFamily="Rockwell"/>
+                    <StackPanel Margin="15"/>
                     <Button Background="{StaticResource CanvasBackground}" Click="SaveStateButton" Content="Save"
                             FontSize="14"
-                            Foreground="LightGray"
+                            Foreground="DarkGray"
+                            FontFamily="Rockwell"/>
+                    <Button Background="{StaticResource CanvasBackground}" Click="UndoButton_Click" Content=" ↶undo"
+                            FontSize="14"
+                            Foreground="DarkGray"
                             FontFamily="Rockwell"/>
                 </ToolBar>
             </ToolBarTray>
@@ -52,7 +58,8 @@
                     IsHitTestVisible="False"
                     Grid.Row="1"
                     Grid.Column="1">
-                    <Border
+                    <Border BorderThickness="5"
+                            BorderBrush="SlateGray"
                             Margin="20,10,0,0"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
@@ -64,14 +71,29 @@
                 <Grid 
                     Grid.Column="1" 
                     Grid.Row="1">
-                    <Border  
+
+                    <Grid Visibility="Collapsed" 
+                          x:Name="mazeGrid" 
+                          HorizontalAlignment="Stretch" 
+                          VerticalAlignment="Stretch" 
+                          Background="{StaticResource MainBackground}"
+                          Margin="10,10,0,0">
+                        <Border CornerRadius="5" Background="{StaticResource CanvasBackground}">
+                            <Canvas x:Name="mazeCanvas"/>
+                        </Border>
+
+                    </Grid>
+
+                    <Border
+                        Visibility="Visible"
                         x:Name="mainPanel"
                         MouseLeftButtonUp="MainPanel_LeftMouseUp"
                         Margin="35,25,15,15"
                         CornerRadius="10"
-                    Background="{StaticResource CanvasBackground}">
+                        Background="{StaticResource CanvasBackground}">
                     </Border>
-                    <Canvas Margin="35,25,15,15" x:Name="mainCanvas"/>
+                    <Canvas Margin="35,25,15,15" Visibility="Visible" x:Name="mainCanvas"/>
+                    
                 </Grid>
 
                 <StackPanel
@@ -79,6 +101,7 @@
                     HorizontalAlignment="Left"
                     Orientation="Horizontal"
                     Grid.Column="1">
+                    <Border Width="2" CornerRadius="2" Background="Gray" Margin="3"/>
                     <StackPanel Width="300">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                             <RadioButton
@@ -137,16 +160,46 @@
 
                             <Slider 
                                 x:Name="speedSlider"
-                                ValueChanged="speedSlider_ValueChanged"
+                                ValueChanged="SpeedSlider_ValueChanged"
                                 Width="300"
                                 VerticalAlignment="Bottom"
                                 Minimum="0"
-                                Maximum="7.5"
-                                Value="0.3"/>
+                                Maximum="0.2"
+                                Value="0.01"/>
                         </StackPanel>
+                        <RadioButton
+                                Checked="AutoInterval_Checked"
+                                IsChecked="True"
+                                FontFamily="BahnSchrift"
+                                Grid.Column="1"
+                                Background="{StaticResource OrangeGradient}"
+                                Style="{StaticResource ToggleButton}"
+                                Width="125"
+                                Height="40"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center">
+                                Auto Delayed Intervals
+                            </RadioButton>
                     </StackPanel>
+                    <Border Width="2" CornerRadius="2" Background="Gray" Margin="3"/>
 
-
+                    <CheckBox
+                        x:Name="mazeCheckbox"
+                        Checked="MazeMode_Checked"
+                        Unchecked="MazeMode_Unchecked"
+                        IsChecked="False"
+                        FontFamily="BahnSchrift"
+                        Grid.Column="1"
+                        Margin="0,0,5,0"
+                        Background="MediumOrchid"
+                        Foreground="{StaticResource PurpleGradient}"
+                        Style="{StaticResource CheckBox}"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Tag="MAZE MODE">
+                        
+                    </CheckBox>
+                    <Border Width="2" CornerRadius="2" Background="Gray" Margin="3"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Width="310">
@@ -193,10 +246,10 @@
                 </StackPanel>
 
                 <ContentControl 
-                x:Name="sidePanel"
-                Grid.Row="1"
-                Grid.Column="0">
-
+                    VerticalAlignment="Stretch"
+                    x:Name="sidePanel"
+                    Grid.Row="1"
+                    Grid.Column="0">
                 </ContentControl>
             </Grid>
         </DockPanel>

@@ -45,13 +45,6 @@ namespace Algoraph.Views
             TextBox textBox = (TextBox)sender;
             textBox.ApplyTemplate();
             TextBox inputText = ((TextBox)textBox.Template.FindName("inputText", textBox));
-
-            if (inputText.Text.Length > 10 || inputText.Text.Contains(" "))
-            {
-                Editor.ShowError("Unnacceptable name, please try again with a name less than 10 characters, inculding no spaces");
-                return;
-            }
-
             ed.ChangeNodeName(inputText.Text);
         }
 

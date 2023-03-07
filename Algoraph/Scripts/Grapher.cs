@@ -128,6 +128,7 @@ namespace Algoraph.Scripts
 
             List<Arc> outBoundArcs = GetOutBoundArcs(connector);
             uint[] arcWeights = outBoundArcs.Select(a => a.weight).ToArray();
+
             Arc minArc = outBoundArcs[Array.IndexOf(arcWeights, arcWeights.Min())];
             usedArcs.Add(minArc);
             Node[] c = minArc.connections;
@@ -236,9 +237,7 @@ namespace Algoraph.Scripts
 
         Node[] GetOddNodes()
         {
-            return (from node in nodes 
-                    where node.nodeConnections.Count % 2 == 1 
-                    select node).ToArray();
+            return nodes.Where(node => node.nodeConnections.Count % 2 == 1).ToArray();
         }
 
         public async Task<uint> RouteInspection(SelectedArcs selectedArcs)
@@ -259,7 +258,7 @@ namespace Algoraph.Scripts
                 await BackTrackTrace(n[0], n[1], previous, selectedArcs);
                 return totalWeight + weighting[this.nodes.IndexOf(n[1])];
             }
-            if (n.Length == 4)
+            if (n.Length == 4) // Not Eulerian
             {
                 Node[] previous1 = DijkstrasInfo(n[0], out uint[] a);
                 uint ab = a[1];

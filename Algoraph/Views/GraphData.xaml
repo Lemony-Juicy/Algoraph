@@ -7,6 +7,8 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" Width="310">
     <Border
+        BorderThickness="2"
+        BorderBrush="BlanchedAlmond"
         CornerRadius="5"      
         Background="{StaticResource DarkGradient}"
         Margin="0,0,0,0">
@@ -34,7 +36,7 @@
                 <Border 
                     Margin="0,20,0,0"
                     x:Name="arcPanel"
-                    Visibility="Collapsed"
+                    Visibility="Visible"
                     Background="{DynamicResource BlueGradient}" 
                     CornerRadius="15">
                     <StackPanel Margin="5">
@@ -72,16 +74,22 @@
                             Delete Selected ARC (DEL)
                         </Button>
 
+                        <TextBlock Margin="5" FontSize="15" FontFamily="Bahnschrift" Foreground="NavajoWhite">
+                            Change Arc Weighting:
+                        </TextBlock>
+
                         <TextBox 
                                 x:Name="arcTextbox" 
                                 KeyDown="ArcWeightTextbox_KeyDown"
+                                PreviewMouseUp="TextBoxSelectAll"
                                 FontSize="15"
-                                Margin="0 15 0 5"
-                                Tag="Change Arc Weight..."
-                                Background="Transparent"
-                                BorderBrush="{DynamicResource DarkGradient}"
-                                BorderThickness="1"
-                                Style="{DynamicResource InputBox}"/>
+                                VerticalContentAlignment="Center"
+                                TextAlignment="Center"
+                                FontFamily="consolas"
+                                Tag="Degree"
+                                Width="80"
+                                Height="38"
+                                Text=""/>
                     </StackPanel>
                 </Border>
 
@@ -135,6 +143,7 @@
                         </Button>
 
                         <Button 
+                                Margin="0,0,0,10"
                                 Click="DeleteNode_Button"
                                 FontFamily="consolas"
                                 Background="{StaticResource RedGradient}"
@@ -142,17 +151,21 @@
                                 Style="{DynamicResource Button}">
                             Delete Selected Nodes (DEL)
                         </Button>
-
+                        <TextBlock Margin="5" FontSize="15" FontFamily="Bahnschrift" Foreground="NavajoWhite">
+                            Change Node Name:
+                        </TextBlock>
                         <TextBox 
                                 x:Name="nodeTextbox" 
                                 KeyDown="NodeNameTextbox_KeyDown"
+                                PreviewMouseUp="TextBoxSelectAll"
                                 FontSize="15"
-                                Margin="0 15 0 5"
-                                Tag="Change Node Name..."
-                                Background="Transparent"
-                                BorderBrush="{DynamicResource DarkGradient}"
-                                BorderThickness="1"
-                                Style="{DynamicResource InputBox}"/>
+                                VerticalContentAlignment="Center"
+                                TextAlignment="Center"
+                                FontFamily="consolas"
+                                Tag="Degree"
+                                Width="80"
+                                Height="38"
+                                Text=""/>
                     </StackPanel>
                 </Border>
                 

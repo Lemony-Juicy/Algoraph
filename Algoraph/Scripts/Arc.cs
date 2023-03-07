@@ -1,56 +1,57 @@
-﻿using System;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using System.Windows.Shapes;
 using System.Windows;
 using System.Windows.Controls.Primitives;
+using System.Windows.Media;
 
 namespace Algoraph.Scripts
 {
     internal class Arc
     {
-        private static string currentName = "A1";
-        public static bool displayWeight = true;
-        public static float thickness = 4.45f;
-
         public Node[] connections = new Node[2];
         public uint weight { get; private set; }
-        public string name { get; private set; }
 
         private ToggleButton arcButton;
         public Label weightLabel { get; private set; }
 
-        public Arc(Editor editor, Node node1, Node node2, uint weight = 1, string name = "")
+        public Arc(Node node1, Node node2, uint weight = 1, Editor? ed = null)
         {
-            object s = Application.Current.FindResource("arcUI");
-            this.arcButton = new ToggleButton { Style = s as Style };
-            this.arcButton.ApplyTemplate();
+            object s = ed == null ? Application.Current.FindResource("mazeArcUI") : ed.FindResource("arcUI");
+            this.arcButton = new ToggleButton
+            {
+                Style = s as Style,
+                Tag = this,
+            };
 
-            this.arcButton.FontSize = thickness;
             weightLabel = new Label()
             {
                 Style = (Style)Application.Current.FindResource("WeightLabel")
             };
+
+            this.arcButton.ApplyTemplate();
             ConnectLine(node1, node2, weight);
 
-            if (name != "")
+            if (ed != null)
             {
-                this.name = name;
-                this.arcButton.Name = name;
-            }
-            else
-            {
-                this.name = currentName;
-                this.arcButton.Name = currentName;
+                this.arcButton.MouseEnter += ed.Arc_Enter;
+                this.arcButton.MouseLeave += ed.Arc_Leave;
+                this.arcButton.Checked += ed.Arc_Checked;
+                this.arcButton.Unchecked += ed.Arc_Unchecked;
             }
 
-            this.arcButton.MouseEnter += editor.Arc_Enter;
-            this.arcButton.MouseLeave += editor.Arc_Leave;
-            this.arcButton.Checked += editor.Arc_Checked;
-            this.arcButton.Unchecked += editor.Arc_Unchecked;
-
-            IncrementName();
             Canvas.SetZIndex(arcButton, 100);
             Canvas.SetZIndex(weightLabel, 300);
+        }
+
+        public void ChangeZIndex(int value)
+        {
+            Canvas.SetZIndex(arcButton, value);
+        }
+
+
+        public void ChangeStyle(Style style)
+        {
+            this.arcButton.Style = style;
         }
 
         private void ConnectLine(Node node1, Node node2, uint weight = 1)
@@ -78,13 +79,6 @@ namespace Algoraph.Scripts
             SetLabelPosition();
         }
 
-        public void ChangeThickness(double thickness)
-        {
-            Line arcLine = (Line)arcButton.Template.FindName("arcLine", arcButton);
-
-            arcLine.StrokeThickness = thickness;
-        }
-
         void SetLabelPosition()
         {
             Line arcLine = (Line)arcButton.Template.FindName("arcLine", arcButton);
@@ -96,6 +90,11 @@ namespace Algoraph.Scripts
             double y = y_raw - weightLabel.ActualHeight / 2;
             Canvas.SetLeft(weightLabel, x);
             Canvas.SetTop(weightLabel, y);
+        }
+
+        public void ChangeColour(Brush brush)
+        {
+            arcButton.Foreground = brush;
         }
 
         public void RenderWeights(Canvas canvas)
@@ -111,12 +110,12 @@ namespace Algoraph.Scripts
             canvas.Children.Remove(weightLabel);
         }
 
-        public void AddToCanvas(Canvas canvas)
+        public void AddToCanvas(Canvas canvas, bool? renderWeight = true)
         {
             if (canvas.Children.Contains(arcButton)) return;
             canvas.Children.Add(arcButton);
 
-            if (displayWeight)
+            if (renderWeight == true)
                 RenderWeights(canvas);
         }
 
@@ -130,7 +129,7 @@ namespace Algoraph.Scripts
         public void UpdateArc(uint weight)
         {
             this.weight = weight;
-           
+
             Line arcLine = (Line)arcButton.Template.FindName("arcLine", arcButton);
             // Assigning the position of first node
 
@@ -151,23 +150,9 @@ namespace Algoraph.Scripts
             return currentNode == connections[0] ? connections[1] : connections[0];
         }
 
-        static void IncrementName()
+        public static Arc? GetConnectingArc(Node node1, Node node2)
         {
-            string currentCount = currentName.Substring(1).ToString();
-            int num = Convert.ToInt16(currentCount) + 1;
-            currentName = "A" + num.ToString();
-        }
-
-        public static void DecrementName()
-        {
-            string currentCount = currentName.Substring(1).ToString();
-            int num = Convert.ToInt16(currentCount) - 1;
-            currentName = "A" + num.ToString();
-        }
-
-        public static void ResetCurrentName()
-        {
-            currentName = "A1";
+            return node1.arcConnections.Find(a => node2.arcConnections.Contains(a));
         }
     }
 }

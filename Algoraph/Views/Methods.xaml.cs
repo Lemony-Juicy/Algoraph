@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Algoraph.Views
 {
@@ -37,6 +38,11 @@ namespace Algoraph.Views
         }
 
         #region Events for Methods.xaml
+
+        private void TextBoxSelectAll(object sender, MouseButtonEventArgs e)
+        {
+            (sender as TextBox).SelectAll();
+        }
 
         private void AutoClear_Checked(object sender, RoutedEventArgs e)
         {
@@ -113,6 +119,35 @@ namespace Algoraph.Views
         private void ClearGraph_Button(object sender, RoutedEventArgs e)
         {
             ed.ClearGraph(warning: !autoClear.IsChecked);
+        }
+
+        #endregion
+
+        #region Maze Events
+
+        private void CreateComplexMaze_Button(object sender, RoutedEventArgs e)
+        {
+            ed.CreateComplexMaze();
+        }
+
+        private void CreateSimpleMaze_Button(object sender, RoutedEventArgs e)
+        {
+            ed.CreateSimpleMaze();
+        }
+
+        private void DFS_Button(object sender, RoutedEventArgs e)
+        {
+            ed.DFS();
+        }
+
+        private void BFS_Button(object sender, RoutedEventArgs e)
+        {
+            ed.BFS();
+        }
+
+        private void A_Star_Button(object sender, RoutedEventArgs e)
+        {
+            ed.A_Star();
         }
 
         #endregion

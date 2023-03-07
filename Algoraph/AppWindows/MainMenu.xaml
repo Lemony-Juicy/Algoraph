@@ -3,13 +3,22 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Algoraph"
         mc:Ignorable="d"
-        Title="" Height="326" Width="400" ResizeMode="NoResize" Icon="/Images/Icon.png">
+        Title="" Height="470" Width="655" ResizeMode="NoResize" Icon="/Images/Icon.png">
     <Border Background="{StaticResource DarkGradient}">
         <Grid>
             <StackPanel Margin="30">
-                <Button 
+                <TextBlock 
+                    VerticalAlignment="Top" 
+                    HorizontalAlignment="Center" 
+                    Foreground="{StaticResource OrangeGradient}"
+                    FontFamily="Bahnschrift"
+                    FontWeight="ExtraBold"
+                    FontSize="45">
+                    AlgoRaph
+                </TextBlock>
+                <StackPanel Orientation="Horizontal">
+                    <Button 
                     Click="CreateNew_Button"
                     Foreground="White"
                     Background="{StaticResource GreenGradient}"
@@ -17,35 +26,42 @@
                     FontFamily="Bahnschrift"
                     FontSize="30"
                     Width="300"
-                    Height="50">
-                    Create New Project
-                </Button>
+                    Height="75">
+                        Create New Project
+                    </Button>
 
-                <Button 
+                    <Button 
                     Click="LoadProject_Button"
-                    Foreground="Khaki"
+                    Foreground="White"
                     Background="{StaticResource DryGreenGradient}"
                     Style="{StaticResource Button}" 
                     FontFamily="Bahnschrift"
                     FontSize="30"
                     Width="300"
-                    Height="50">
-                    Load Project
-                </Button>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <Image Source="/Images/NetworkGraph.png" Width="100"/>
+                    Height="75">
+                        Load Project
+                    </Button>
                 </StackPanel>
-            </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
-            <TextBlock 
-                VerticalAlignment="Bottom" 
-                HorizontalAlignment="Center" Margin="15" 
-                Foreground="{StaticResource OrangeGradient}"
-                FontFamily="Bahnschrift"
-                FontWeight="ExtraBold"
-                FontSize="45">
-                AlgoRaph
-            </TextBlock>
+                <TextBlock 
+                    Margin="0,20,0,0"
+                    VerticalAlignment="Top" 
+                    HorizontalAlignment="Stretch"
+                    TextWrapping="WrapWithOverflow"
+                    Foreground="White"
+                    FontFamily="consolas"
+                    FontSize="18">
+                    AlgoRaph is a program designed to help you visualise and create
+                    network graphs, as well as manipulate them using different types 
+                    of algorithms. <LineBreak/> 
+                    AlgoRaph also includes a Maze Mode where you can create random mazes, 
+                    select start and end points, perform different maze solving algorithms, 
+                    and view how optimal each of these algorithms are. <LineBreak/>
+                    You can also save network graphs you create. Note that you cannot save 
+                    the maze instances you create.
+                </TextBlock>
+            </StackPanel>
         </Grid>
     </Border>
 </Window>
