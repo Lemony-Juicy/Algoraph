@@ -6,51 +6,55 @@ using System.Windows.Controls;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Controls.Primitives;
+using Algoraph.Scripts.Maze_Scripts;
+using Windows.Data.Xml.Dom;
 
 namespace Algoraph.Scripts
 {
     internal class Node
     {
-        private static string currentName = "N1";
         public static float radius = 12.5f;
 
         public List<Node> nodeConnections { get; private set; }
         public List<Arc> arcConnections { get; private set; }
-        public string name { get; private set; }
+
+        public string name { get; private set; } = "";
         private Point location;
         public ToggleButton nodeButton { get; private set; }
 
-        public Node(Editor editor, Point location, List<Node>? connections = null, string name = "")
+        public Node(Editor ed, Point location, string name = "", List<Node>? connections = null)
         {
             this.nodeConnections = connections ?? new List<Node>();
             this.arcConnections = new List<Arc>();
 
-            object s = editor.FindResource("nodeUI");
+            object s = IsMazeNode()? ed.FindResource("mazeNodeUI"): ed.FindResource("nodeUI");
             this.nodeButton = new ToggleButton()
             {
                 Style = (Style)s,
-                Background = (LinearGradientBrush)editor.FindResource("OrangeGradient"),
-                MinWidth = Node.radius * 2
+                Background = (LinearGradientBrush)ed.FindResource("OrangeGradient"),
+                MinWidth = Node.radius * 2,
+                Tag = this
             };
 
-            if (name != "")
-            {
-                this.ChangeName(name);
-            }
-            else
-            {
-                this.name = currentName;
-                this.nodeButton.Name = currentName;
-            }
+            this.ChangeName(name);
 
             SetLocation(location.X, location.Y);
-            this.nodeButton.Checked += editor.Node_Checked;
-            this.nodeButton.Unchecked += editor.Node_Unchecked;
-            this.nodeButton.MouseEnter += editor.Node_Enter;
-            this.nodeButton.MouseLeave += editor.Node_Leave;
 
-            IncrementName();
+            // Ensures the button events are only enabled if the 
+            if (!IsMazeNode())
+            {
+                this.nodeButton.Checked += ed.Node_Checked;
+                this.nodeButton.Unchecked += ed.Node_Unchecked;
+                this.nodeButton.MouseEnter += ed.Node_Enter;
+                this.nodeButton.MouseLeave += ed.Node_Leave;
+            }
+            
             Canvas.SetZIndex(this.nodeButton, 500);
+        }
+
+        public bool IsMazeNode()
+        {
+            return this.GetType() == typeof(MazeNode);
         }
 
         public Point GetLocation()
@@ -75,7 +79,7 @@ namespace Algoraph.Scripts
             canvas.Children.Remove(nodeButton);
         }
 
-        public void AddConnection(Node node, Arc arc)
+        bool AddConnection(Node node, Arc arc)
         {
             if (!nodeConnections.Contains(node))
             {
@@ -87,90 +91,53 @@ namespace Algoraph.Scripts
             {
                 arcConnections.Add(arc);
                 node.arcConnections.Add(arc);
+                return true;
             }
-
+            return false;
         }
 
-        public void RemoveConnection(Node node, Arc arc)
+        bool RemoveConnection(Node node, Arc arc)
         {
-            if (nodeConnections.Contains(node))
-            {
-                nodeConnections.Remove(node);
-                node.nodeConnections.Remove(this);
-            }
-
-            if (arcConnections.Contains(arc))
-            {
-                arcConnections.Remove(arc);
-                node.arcConnections.Remove(arc);
-            }
-        }
-
-        public void ClearConnections()
-        {
-            nodeConnections.Clear();
-            arcConnections.Clear();
+            bool removedNode = nodeConnections.Remove(node);
+            return arcConnections.Remove(arc) && removedNode;
         }
 
         public void SetLocation(double X, double Y)
-        {
-
+        { 
             this.location = new Point(X-50, Y-50);
             Canvas.SetLeft(nodeButton, X-50);
             Canvas.SetTop(nodeButton, Y-50);
         }
 
-
-        public string GetNodeConnectionNames()
-        {
-            if (nodeConnections.Count == 0) return "None";
-            StringBuilder names = new StringBuilder();
-            names.Append("[");
-            for (int i = 0; i < nodeConnections.Count - 1; i++)
-            {
-                names.Append(nodeConnections[i].name + ", ");
-            }
-            names.Append(nodeConnections.Last().name);
-            names.Append("]");
-            return names.ToString();
-        }
-
         public bool ChangeName(string newName)
         {
             this.name = newName;
-            try
+            this.nodeButton.Content = newName;
+            return true;
+        }
+
+        public static bool ConnectNodes(Node n1, Node n2, Arc arc)
+        {
+            return n1.AddConnection(n2, arc) && n2.AddConnection(n1, arc);
+        }
+
+        public static bool DisconnectNodes(Node n1, Node n2, Arc arc)
+        {
+            return n1.RemoveConnection(n2, arc) && n2.RemoveConnection(n1, arc);
+        }
+
+        public static string GetNextName(IEnumerable<Node> nodes)
+        {
+            string[] names = nodes.Select(n => n.name).ToArray();
+            string currentName = "N1";
+
+            while (names.Contains(currentName))
             {
-                this.nodeButton.Name = newName;
-                return true;
+                string currentCount = currentName[1..].ToString();
+                int num = Convert.ToInt16(currentCount) + 1;
+                currentName = "N" + num.ToString();
             }
-            catch { return false; }
-        }
-
-
-        public static bool CheckNameInFormat(string name)
-        {
-            int result;
-            int.TryParse(name.Substring(1), out result);
-            return name.First().ToString() == "N" && result != 0;
-        }
-
-        static void IncrementName()
-        {
-            string currentCount = currentName.Substring(1).ToString();
-            int num = Convert.ToInt16(currentCount) + 1;
-            currentName = "N" + num.ToString();
-        }
-
-        public static void DecrementName()
-        {
-            string currentCount = currentName.Substring(1).ToString();
-            int num = Convert.ToInt16(currentCount) - 1;
-            currentName = "N" + num.ToString();
-        }
-
-        public static void ResetCurrentName()
-        {
-            currentName = "N1";
+            return currentName;
         }
     }
 }

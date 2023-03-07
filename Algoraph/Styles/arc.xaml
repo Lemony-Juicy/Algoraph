@@ -9,7 +9,7 @@
                     <Grid>
                         <Line 
                             Name="arcLine"  
-                            Stroke="White"
+                            Stroke="{TemplateBinding Foreground}"
                             Opacity="0.75"
                             StrokeThickness="3.5"/>
                     </Grid>
@@ -28,7 +28,22 @@
                             <Setter TargetName="arcLine" Property="Cursor" Value="Arrow"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
+    <Style TargetType="{x:Type ToggleButton}" x:Key="mazeArcUI">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Grid>
+                        <Line 
+                            Name="arcLine"
+                            StrokeLineJoin="Round"
+                            Stroke="{TemplateBinding Foreground}"
+                            StrokeThickness="7.25"/>
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

@@ -7,7 +7,8 @@
                 <ControlTemplate TargetType="ToggleButton">
                     <Grid>
                         <Ellipse 
-                            x:Name="nodeEllipse" 
+                            x:Name="nodeEllipse"
+                            Tag="{TemplateBinding Tag}"
                             VerticalAlignment="Center" 
                             HorizontalAlignment="Center"  
                             Width="{TemplateBinding MinWidth}"
@@ -17,6 +18,7 @@
                             StrokeThickness="1"/>
 
                         <Ellipse 
+                            Tag="{TemplateBinding Tag}"
                             x:Name="nodeShade" 
                             IsHitTestVisible="False" 
                             VerticalAlignment="Center" 
@@ -29,6 +31,7 @@
                             Opacity="0"/>
 
                         <TextBlock 
+                            Tag="{TemplateBinding Tag}"
                             TextWrapping="WrapWithOverflow"
                             IsHitTestVisible="False"
                             VerticalAlignment="Center" 
@@ -36,7 +39,7 @@
                             FontSize="10"     
                             FontFamily="Consolas"
                             Foreground="White"
-                            Text="{TemplateBinding Name}"/>
+                            Text="{TemplateBinding Content}"/>
                     </Grid>
 
                     <ControlTemplate.Triggers>
@@ -53,6 +56,46 @@
                         </Trigger>
                     </ControlTemplate.Triggers>
 
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+
+        <Setter Property="Width" Value="100"/>
+        <Setter Property="Height" Value="100"/>
+    </Style>
+
+    <Style TargetType="{x:Type ToggleButton}" x:Key="mazeNodeUI">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Grid>
+                        <Ellipse 
+                            x:Name="nodeEllipse" 
+                            VerticalAlignment="Center" 
+                            HorizontalAlignment="Center"  
+                            Width="18"
+                            Height="18"
+                            Fill="{TemplateBinding Background}"
+                            Stroke="Wheat"
+                            StrokeThickness="0"/>
+
+                        <TextBlock 
+                            TextWrapping="WrapWithOverflow"
+                            IsHitTestVisible="False"
+                            VerticalAlignment="Center" 
+                            HorizontalAlignment="Center"                                       
+                            FontSize="10"     
+                            FontFamily="Consolas"
+                            Foreground="White"
+                            Text="{TemplateBinding Content}"/>
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="nodeEllipse" Property="Cursor" Value="Hand"/>
+                            <Setter TargetName="nodeEllipse" Property="StrokeThickness" Value="3"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

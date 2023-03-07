@@ -6,7 +6,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Shapes;
 using Algoraph.Scripts;
+using Algoraph.Scripts.Maze_Scripts;
 using Algoraph.Views;
 using Microsoft.Win32;
 
@@ -19,20 +22,28 @@ namespace Algoraph
         readonly SelectedNodes selectedNodes;
         readonly SelectedArcs selectedArcs;
         readonly Grapher grapher;
+        readonly MazeGraph mazeGraph;
         readonly UndoStack undoStack;
 
         bool Mdown = false;
+        bool processing = false;
         bool middleMouseDown = false;
-        bool nextStepClicked = false;
+        Node? nodeArcDraggedFrom = null;
+        Line? dragLine = null;
+        TaskCompletionSource<bool>? nextStepClicked;
 
-        Methods methods;
-        GraphData graphData;
+        int mazeWidth = 40;
+        int mazeHeight = 30;
+
+        public readonly Methods methods;
+        readonly GraphData graphData;
         public string? path = null;
 
         public Editor()
         {
             InitializeComponent();
             grapher = new Grapher(this);
+            mazeGraph = new MazeGraph(this, mazeWidth, mazeHeight);
             undoStack = new UndoStack();
 
             methods = new Methods(this);
@@ -47,6 +58,21 @@ namespace Algoraph
             this.KeyUp += MainPanel_KeyUp;
 
             CursorArrowMode();
+        }
+
+        public void SetProcessing(bool processing)
+        {
+            this.processing = processing;
+        }
+
+        public bool CheckIsProcessing()
+        {
+            if (processing)
+            {
+                MessageBox.Show("A Process is currently being ran, please try again later.\nIf you are on stepped intervals, and want to finish this process, click the delayed interval button at the top, and set the delay on the slider to zero.");
+                return true;
+            }
+            return false;
         }
 
         #endregion
@@ -68,14 +94,14 @@ namespace Algoraph
 
         public void MarkAsChanged()
         {
-            if (path != null && !this.Title.Contains("*"))
-                this.Title = this.Title + " *";
+            if (path != null && !this.Title.Contains('*'))
+                this.Title += " *";
 
         }
 
         public void UpdateNodePanel()
         {
-            int selectedCount = selectedNodes.nodes.Count();
+            int selectedCount = selectedNodes.nodes.Count;
             if (selectedCount < 1) 
             { 
                 graphData.nodePanel.Visibility = Visibility.Collapsed; 
@@ -89,23 +115,22 @@ namespace Algoraph
 
 
             Node n = selectedNodes.nodes.Last();
-            graphData.nodeTitle.Text = $"Node Info ({n.name})";
-            graphData.nodeInfo1.Text = "Connections:\n" + n.GetNodeConnectionNames();
 
-            int degree = n.nodeConnections.Count();
+            int degree = n.nodeConnections.Count;
             string plurality = degree > 1 ? "s" : "";
             graphData.nodeInfo2.Text = $"Connecting {degree} other node{plurality}";
+            graphData.nodeInfo1.Text = n.name;
 
             graphData.nodePanel.Visibility = Visibility.Visible;
         }
 
         public void UpdateArcPanel()
         {
-            int selectedCount = selectedArcs.arcs.Count();
+            int selectedCount = selectedArcs.arcs.Count;
             if (selectedCount < 1) { graphData.arcPanel.Visibility = Visibility.Collapsed; return; }
 
             Arc a = selectedArcs.arcs.Last();
-            graphData.arcTitle.Text = $"Arc Info ({a.name})";
+            graphData.arcTitle.Text = $"Arc Info";
             graphData.arcInfo.Text = "Weighting: " + a.weight;
             graphData.arcPanel.Visibility = Visibility.Visible;
         }
@@ -186,7 +211,7 @@ namespace Algoraph
         public void ChangeNodeName(string newName)
         {
             BeforeGraphChanged();
-            if (grapher.NodeNameExists(newName))
+            if (!grapher.ValidNodeName(newName))
             {
                 ShowError("This name is invalid, try again.");
                 return;
@@ -254,10 +279,13 @@ namespace Algoraph
 
         public async void Prims()
         {
+            if (CheckIsProcessing()) return;
             if (selectedNodes.nodes.Count == 1 && grapher.IsFullyConnected())
             {
                 ShowStepIntervalMsgBox();
+                SetProcessing(true);
                 await grapher.Prims(new List<Node>() { selectedNodes.nodes[0] }, selectedArcs);
+                SetProcessing(false);
                 selectedNodes.ClearItems();
                 MessageBox.Show("- The spanning tree is highlighted in Orange." +
                     "\n- The arcs NOT in Orange can be deleted" +
@@ -275,10 +303,13 @@ namespace Algoraph
 
         public async void Kruskals()
         {
+            if (CheckIsProcessing()) return;
             if (grapher.IsFullyConnected() && grapher.arcs.Count > 0)
             {
                 ShowStepIntervalMsgBox();
+                SetProcessing(true);
                 await grapher.Kruskals(selectedArcs);
+                SetProcessing(false);
                 MessageBox.Show("- The spanning tree is highlighted in Orange." +
                     "\n- The arcs NOT in Orange can be deleted" +
                     "\n- Press CTRL + DEL Keys to remove these arcs, or click away to ignore",
@@ -294,6 +325,7 @@ namespace Algoraph
 
         public async void DijkstrasPath()
         {
+            if (CheckIsProcessing()) return;
             if (!grapher.IsFullyConnected() || selectedNodes.nodes.Count != 2) 
             { 
                 ShowError("Please select a starting node and an end node to find the shortest path, or ensure graph is fully connected"); 
@@ -305,8 +337,9 @@ namespace Algoraph
             selectedNodes.ClearItems();
 
             ShowStepIntervalMsgBox();
+            SetProcessing(true);
             await grapher.BackTrackTrace(startNode, endNode, grapher.DijkstrasInfo(startNode, out uint[] weighting), selectedArcs);
-
+            SetProcessing(false);
             int indexOfWeight = grapher.nodes.IndexOf(endNode);
             uint minTotalWeight = weighting[indexOfWeight];
 
@@ -321,6 +354,7 @@ namespace Algoraph
 
         public async void RouteInspection()
         {
+            if (!CheckIsProcessing()) return;
             if (!grapher.IsFullyConnected() && grapher.arcs.Count <= 1)
             {
                 ShowError("Ensure graph is fully connected, and there is more than one arc, to carry out route inspection");
@@ -328,10 +362,12 @@ namespace Algoraph
             }
 
             ShowStepIntervalMsgBox();
+            SetProcessing(true);
             uint minTotalWeight = await grapher.RouteInspection(selectedArcs);
+            SetProcessing(false);
 
             MessageBox.Show($"The path to be repeated has been highlighted in Orange\n" +
-                $"Total minimum weighting for route: {minTotalWeight}",
+                $"{(minTotalWeight == 0? "This graph has too many odd nodes. Max number of odd nodes is 4": "Total minimum weighting for route: " + minTotalWeight.ToString())}",
                 "Route Inspection Information",
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
@@ -373,14 +409,14 @@ namespace Algoraph
 
         public void Node_Checked(object sender, RoutedEventArgs e)
         {
-            Node? node = grapher.GetNodeFromName(((ToggleButton)sender).Name);
+            Node? node = ((ToggleButton)sender).Tag as Node;
             selectedNodes.OnCheck(node, selectedArcs);
             UpdateNodePanel();
         }
 
         public void Node_Unchecked(object sender, RoutedEventArgs e)
         {
-            Node? node = grapher.GetNodeFromName(((ToggleButton)sender).Name);
+            Node? node = ((ToggleButton)sender).Tag as Node;
             selectedNodes.OnUncheck(node);
             UpdateNodePanel();
         }
@@ -400,14 +436,14 @@ namespace Algoraph
 
         public void Arc_Checked(object sender, RoutedEventArgs e)
         {
-            Arc? arc = grapher.GetArcFromName(((ToggleButton)sender).Name);
+            Arc? arc = ((ToggleButton)sender).Tag as Arc;
             selectedArcs.OnCheck(arc, selectedNodes);
             UpdateArcPanel();
         }
 
         public void Arc_Unchecked(object sender, RoutedEventArgs e)
         {
-            Arc? arc = grapher.GetArcFromName(((ToggleButton)sender).Name);
+            Arc? arc = ((ToggleButton)sender).Tag as Arc;
             selectedArcs.OnUncheck(arc);
             UpdateArcPanel();
         }
@@ -448,18 +484,31 @@ namespace Algoraph
                 MessageBox.Show("To move to next step in this algorithmic process, " +
                     "click the 'Next Step' green button at the top.", "Notice", MessageBoxButton.OK, MessageBoxImage.Information);
         }
+
         public async Task WaitForNextCycle()
         {
             if (delayedIntervalPanel.Visibility == Visibility.Visible)
+            {
                 await Task.Delay((int)(speedSlider.Value * 1000));
+            }
             else
             {
-                while (!nextStepClicked)
+                // Wait for user to click the next step button
+                bool isSteppedInterval = await WaitForNextStep();
+                if (!isSteppedInterval)
                 {
-                    await Task.Delay(200);
+                    await Task.Delay((int)(speedSlider.Value * 1000));
                 }
             }
-            nextStepClicked = false;
+        }
+
+        private async Task<bool> WaitForNextStep()
+        {
+            // the TaskCompletionSource is a class used to help convert things to asyncronous behaviours.
+            nextStepClicked = new TaskCompletionSource<bool>();
+
+            // This waits for the nextStepClicked.TrySetResult(VALUE) method to be done.
+            return await nextStepClicked.Task;
         }
 
         /// <summary>
@@ -486,9 +535,14 @@ namespace Algoraph
 
         #region This Window's Events
 
+        private void UndoButton_Click(object sender, RoutedEventArgs e)
+        {
+            undoStack.LoadPrevious(this);
+        }
+
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (!Title.Contains("*")) return;
+            if (!Title.Contains('*')) return;
             MessageBoxResult r = MessageBox.Show("Do you want to save?", "Save document", MessageBoxButton.YesNo);
             if (r == MessageBoxResult.Yes)
             {
@@ -501,6 +555,15 @@ namespace Algoraph
             if (delayedIntervalPanel == null) return;
             delayedIntervalPanel.Visibility = Visibility.Visible;
             steppedIntervalButton.Visibility = Visibility.Collapsed;
+
+            if (nextStepClicked == null) return;
+
+            // Setting the result to false so it triggers the await WaitForNextStep() to return false.
+            // This implies the user has switched to delay intervals from the stepped intervals, so use that instead 
+            nextStepClicked.TrySetResult(false);
+
+            // then the variable is set to null again.
+            nextStepClicked = null;
         }
 
         private void SteppedInterval_Checked(object sender, RoutedEventArgs e)
@@ -512,13 +575,20 @@ namespace Algoraph
 
         private void SteppedInterval_Click(object sender, RoutedEventArgs e)
         {
-            nextStepClicked = true;
+            if (nextStepClicked == null) return;
+            
+            // Setting the result to true so it triggers the await WaitForNextStep() to return true.
+            nextStepClicked.TrySetResult(true);  
+
+            // then the variable is set to null again.
+            nextStepClicked = null;
+            
         }
 
-        private void speedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void SpeedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            double delay = Math.Round(speedSlider.Value, 1);
-            if (!delay.ToString().Contains("."))
+            double delay = Math.Round(speedSlider.Value, 2);
+            if (!delay.ToString().Contains('.'))
                 delayTextBlock.Text = $"{delay}.0 seconds";
             else
                 delayTextBlock.Text = $"{delay} seconds";
@@ -537,7 +607,7 @@ namespace Algoraph
 
         private void ButtonBackToMenu(object sender, RoutedEventArgs e)
         {
-            MainMenu menu = new MainMenu();
+            MainMenu menu = new();
             menu.Show();
         }
 
@@ -548,7 +618,7 @@ namespace Algoraph
 
         private void NewProjectButton(object sender, RoutedEventArgs e)
         {
-            Editor editor = new Editor();
+            Editor editor = new();
             editor.Show();
         }
 
@@ -563,10 +633,27 @@ namespace Algoraph
 
         private void Main_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.MiddleButton == MouseButtonState.Pressed && !this.middleMouseDown)
+            if (!middleMouseDown && !(mazeCheckbox.IsChecked == true) && e.MiddleButton == MouseButtonState.Pressed)
             {
                 BeforeGraphChanged();
                 this.middleMouseDown = true;
+            }
+
+            // Start dragging line
+            if (e.RightButton == MouseButtonState.Pressed && Mouse.DirectlyOver is Ellipse component && nodeArcDraggedFrom == null)
+            {
+                nodeArcDraggedFrom = (Node)component.Tag;
+                dragLine = new Line()
+                {
+                    X1 = nodeArcDraggedFrom.GetLocation().X,
+                    Y1 = nodeArcDraggedFrom.GetLocation().Y,
+                    X2 = Mouse.GetPosition(mainPanel).X,
+                    Y2 = Mouse.GetPosition(mainPanel).Y,
+                    Stroke = Brushes.Black,
+                    Opacity = 0.75,
+                    StrokeThickness = 3
+                };
+                mainCanvas.Children.Add(dragLine);
             }
         }
 
@@ -577,6 +664,16 @@ namespace Algoraph
                 this.middleMouseDown = false;
                 MarkAsChanged();
             }
+
+            double distance = grapher.GetClosestNodeDistance(Mouse.GetPosition(mainPanel));
+            Node closestNode = grapher.GetClosestNode(Mouse.GetPosition(mainPanel));
+            if (e.RightButton == MouseButtonState.Released && distance < 50 && nodeArcDraggedFrom != null)
+            {
+                grapher.Connect(closestNode, nodeArcDraggedFrom);
+            }
+            nodeArcDraggedFrom = null;
+            mainCanvas.Children.Remove(dragLine);
+            dragLine = null;
         }
 
         private void MainPanel_LeftMouseUp(object sender, MouseButtonEventArgs e)
@@ -602,7 +699,13 @@ namespace Algoraph
             {
                 grapher.MoveNode(grapher.GetClosestNode(Mouse.GetPosition(mainPanel)), 
                     MousePosMainPanel());
-            }             
+            }
+
+            if (dragLine != null)
+            {
+                dragLine.X2 = Mouse.GetPosition(mainPanel).X;
+                dragLine.Y2 = Mouse.GetPosition(mainPanel).Y;
+            }
         }
 
         private void MainPanel_KeyDown(object sender, KeyEventArgs e)
@@ -627,7 +730,7 @@ namespace Algoraph
             switch (e.Key)
             {
                 case Key.Delete:
-                    if (Keyboard.IsKeyDown(Key.LeftCtrl))
+                    if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
                     {
                         DeleteNonSelectedArcs();
                         DeleteNonSelectedNodes();
@@ -640,10 +743,8 @@ namespace Algoraph
                     
                     break;
                 case Key.J:
-                    ConnectSelectedNodes();
-                    break;
-                case Key.P:
-                    Prims();
+                    if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+                        ConnectSelectedNodes();
                     break;
             }
         }
@@ -682,10 +783,12 @@ namespace Algoraph
         {
             if (path == null)
             {
-                SaveFileDialog fileDialogue = new SaveFileDialog();
-                fileDialogue.DefaultExt = ".json";
-                fileDialogue.Filter = "JSON files (*.json)|*.json";
-                fileDialogue.CheckFileExists = false;
+                SaveFileDialog fileDialogue = new()
+                {
+                    DefaultExt = ".json",
+                    Filter = "JSON files (*.json)|*.json",
+                    CheckFileExists = false
+                };
 
                 // When user clicks ok button
                 if (fileDialogue.ShowDialog() == true)
@@ -704,5 +807,56 @@ namespace Algoraph
 
         #endregion
 
+        #region Maze
+
+        private void MazeMode_Checked(object sender, RoutedEventArgs e)
+        {
+            mazeGrid.Visibility = Visibility.Visible;
+            methods.mazeStackPanel.Visibility = Visibility.Visible;
+
+            mainCanvas.Visibility = Visibility.Collapsed;
+            mainPanel.Visibility = Visibility.Collapsed;
+            methods.mainStackPanel.Visibility = Visibility.Collapsed;
+        }
+
+        private void MazeMode_Unchecked(object sender, RoutedEventArgs e)
+        {
+            mazeGrid.Visibility = Visibility.Collapsed;
+            methods.mazeStackPanel.Visibility = Visibility.Collapsed;
+
+            mainCanvas.Visibility = Visibility.Visible;
+            mainPanel.Visibility = Visibility.Visible;
+            methods.mainStackPanel.Visibility = Visibility.Visible;
+        }
+
+
+        public async void CreateSimpleMaze()
+        {
+            await mazeGraph.CreateSimpleMazeAnimation();
+        }
+
+        public async void CreateComplexMaze()
+        {
+            await mazeGraph.CreateComplexMazeAnimation();
+        }
+
+        public async void DFS()
+        {
+            await mazeGraph.DFS();
+        }
+
+        public async void BFS()
+        {
+            await mazeGraph.BFS();
+        }
+
+        public async void A_Star()
+        {
+            await mazeGraph.A_star();
+        }
+
+
+
+        #endregion
     }
 }

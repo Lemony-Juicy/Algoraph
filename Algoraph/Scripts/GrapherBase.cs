@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Xml.Linq;
 
 namespace Algoraph.Scripts
 {
@@ -38,51 +39,28 @@ namespace Algoraph.Scripts
             return new Vector(X, Y) * size;
         }
 
-        public Node? GetNodeFromName(string name)
-        {
-            return Array.Find(nodes.ToArray(), (n) => name == n.name);
-        }
-
-        public Arc? GetArcFromName(string name)
-        {
-            return Array.Find(arcs.ToArray(), (n) => name == n.name);
-        }
-
         public void Connect(Node node1, Node node2, uint weight = 1) // Connecting Two Nodes
         {
             if (node1 == node2) return;
             if (node1.nodeConnections.Contains(node2))
                 Disconnect(node1, node2);
-            Arc arc = new(ed, node1, node2, weight: weight);
+            Arc arc = new(node1, node2, weight, ed);
             arcs.Add(arc);
-            arc.AddToCanvas(ed.mainCanvas);
-            node1.AddConnection(node2, arc);
+            arc.AddToCanvas(ed.mainCanvas, !ed.methods.hideWeightsCheckBox.IsChecked);
+            Node.ConnectNodes(node1, node2, arc);
             ed.RenderTable();
         }
 
         public void Disconnect(Node node1, Node node2) // Connecting Two Nodes
         {
-            Arc? arc = GetConnectingArc(node1, node2);
-            node1.RemoveConnection(node2, arc);
+            Arc? arc = Arc.GetConnectingArc(node1, node2);
+            Node.DisconnectNodes(node1, node2, arc);
             RemoveArc(arc);
-        }
-
-        public static Arc? GetConnectingArc(Node node1, Node node2)
-        {
-            foreach (Arc arc1 in node1.arcConnections)
-            {
-                foreach (Arc arc2 in node2.arcConnections)
-                {
-                    if (arc1 == arc2) return arc1;
-                }
-            }
-            return null;
         }
 
         public void CompleteGraphArcs()
         {
             /* This generates arcs in the graph so that every node is connected to every other node */
-            if (nodes.Count == 0) return;
             ClearArcs();
 
             for (int i = 0; i < nodes.Count; i++)
@@ -121,7 +99,7 @@ namespace Algoraph.Scripts
                     used.Add(i);
                     List<int> remaining = GetRemainingNodeIndices(used);
                     //if (remaining.Count == 0) return;
-                    Node nodeToConnect = nodes[remaining[CustomExtentions.random.Next(0, remaining.Count)]];
+                    Node nodeToConnect = nodes[remaining.SelectRandom()];
                     Connect(nodes[i], nodeToConnect, (uint)CustomExtentions.random.Next(1, 100));
                 }
             }
@@ -146,22 +124,31 @@ namespace Algoraph.Scripts
 
         public void RegularNodes(int degree, float size, Point startAt, double offsetAngle = 0)
         {
-            double angle = (Math.PI * 2) / degree;
+            double angle = (Math.Tau) / degree;
             for (int i = 1; i <= degree; i++)
             {
                 Point pos = Point.Add(startAt, AngleToPoint(angle * i + offsetAngle, size));
-                AddNode(pos);
+                if (!AddNode(pos))
+                    return;
             }
         }
         #endregion
+
+
         #region Removing/Adding Nodes
 
-        public void AddNode(Point pos)
+        public bool AddNode(Point pos)
         {
-            Node newNode = new Node(ed, pos);
+            if (nodes.Count > 30)
+            {
+                Editor.ShowError("Maximum amount of nodes allowed is 30, So you cannot create anymore nodes.");
+                return false;
+            }
+            Node newNode = new Node(ed, pos, name: Node.GetNextName(nodes));
             nodes.Add(newNode);
             newNode.AddToCanvas(ed.mainCanvas);
             ed.RenderTable();
+            return true;
         }
 
         public void RemoveNode(Node node)
@@ -170,7 +157,7 @@ namespace Algoraph.Scripts
             foreach (Arc arc in node.arcConnections.ToArray())
             {
                 Node nodeConnected = arc.GetConnectedNode(node);
-                nodeConnected.RemoveConnection(node, arc);
+                Node.DisconnectNodes(nodeConnected, node, arc);
                 RemoveArc(arc);
             }
             nodes.Remove(node);
@@ -179,7 +166,7 @@ namespace Algoraph.Scripts
 
         public void RemoveArc(Arc arc)
         {
-            arc.connections[0].RemoveConnection(arc.connections[1], arc);
+            Node.DisconnectNodes(arc.connections[0], arc.connections[1], arc);
             arc.RemoveFromCanvas(ed.mainCanvas);
             arcs.Remove(arc);
             ed.RenderTable();
@@ -189,10 +176,9 @@ namespace Algoraph.Scripts
         {
             foreach (Arc arc in arcs)
             {
-                arc.connections[0].RemoveConnection(arc.connections[1], arc);
+                Node.DisconnectNodes(arc.connections[0], arc.connections[1], arc);
                 arc.RemoveFromCanvas(ed.mainCanvas);
             }
-            Arc.ResetCurrentName();
             arcs.Clear();
             ed.RenderTable();
         }
@@ -201,21 +187,15 @@ namespace Algoraph.Scripts
         {
             foreach (Node node in nodes)
                 node.RemoveFromCanvas(ed.mainCanvas);
-            Node.ResetCurrentName();
             nodes.Clear();
             ed.RenderTable();
         }
 
         #endregion
 
-        public bool NodeNameExists(string name)
+        public bool ValidNodeName(string name)
         {
-            foreach (Node n in nodes)
-            {
-                if (n.name == name)
-                    return true;
-            }
-            return Node.CheckNameInFormat(name);
+            return nodes.Find(n => n.name == name) == null;
         }
 
         public void ChangeNodeSize(float newRadius)
@@ -229,15 +209,6 @@ namespace Algoraph.Scripts
                 node.nodeButton.Height = node.nodeButton.Width;
             }
             Node.radius = newRadius;
-        }
-
-        public void ChangeArcThickness(float thickness)
-        {
-            foreach (Arc arc in arcs)
-            {
-                arc.ChangeThickness(thickness);
-            }
-            Arc.thickness = thickness;
         }
 
         public void MoveNode(Node? node, Point pos)
@@ -263,7 +234,6 @@ namespace Algoraph.Scripts
                 foreach (Arc arc in arcs)
                     arc.DerenderWeights(ed.mainCanvas);
             }
-            Arc.displayWeight = show;
         }
 
         public Node? GetClosestNode(Point pos)
@@ -281,6 +251,18 @@ namespace Algoraph.Scripts
                 }
             }
             return currentBest;
+        }
+
+        public double GetClosestNodeDistance(Point pos)
+        {
+            try
+            {
+                return nodes.Select(n => (n.GetLocation() - pos).Length).Min();
+            }
+            catch (InvalidOperationException) 
+            { 
+                return double.MaxValue; 
+            }
         }
     }
 }

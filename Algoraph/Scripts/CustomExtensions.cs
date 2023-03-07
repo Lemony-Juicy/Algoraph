@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Input;
 using System.Windows.Media;
 
 namespace Algoraph
@@ -15,6 +14,11 @@ namespace Algoraph
         public static string Stringify(this IEnumerable<Node> nodes)
         {
             return string.Join(',', nodes.Select(n => n.name));
+        }
+
+        public static TYPE SelectRandom<TYPE>(this IEnumerable<TYPE> items)
+        {
+            return items.ElementAt(random.Next(items.Count()));
         }
     }
 }
