@@ -36,7 +36,7 @@
                 <Border 
                     Margin="0,20,0,0"
                     x:Name="arcPanel"
-                    Visibility="Visible"
+                    Visibility="Collapsed"
                     Background="{DynamicResource BlueGradient}" 
                     CornerRadius="15">
                     <StackPanel Margin="5">
@@ -81,7 +81,6 @@
                         <TextBox 
                                 x:Name="arcTextbox" 
                                 KeyDown="ArcWeightTextbox_KeyDown"
-                                PreviewMouseUp="TextBoxSelectAll"
                                 FontSize="15"
                                 VerticalContentAlignment="Center"
                                 TextAlignment="Center"
@@ -157,7 +156,6 @@
                         <TextBox 
                                 x:Name="nodeTextbox" 
                                 KeyDown="NodeNameTextbox_KeyDown"
-                                PreviewMouseUp="TextBoxSelectAll"
                                 FontSize="15"
                                 VerticalContentAlignment="Center"
                                 TextAlignment="Center"

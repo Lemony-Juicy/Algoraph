@@ -1,10 +1,7 @@
 ﻿using System;
-using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Xml.Linq;
-using Algoraph.Scripts.Saving_and_Loading;
 
 namespace Algoraph.Scripts
 {
@@ -19,7 +16,7 @@ namespace Algoraph.Scripts
 
         public void SaveState(string path)
         {
-            string jsonString = Saver.GetJsonData(this.nodes, this.arcs);
+            string jsonString = Saver.GetJsonData(this.nodes, this.arcs, header_item: Saver.HEADER_ITEM);
             Saver.SaveJsonData(jsonString, path);
         }
 

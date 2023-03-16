@@ -10,10 +10,14 @@ namespace Algoraph.Scripts
 {
     internal class Saver
     {
-        public static string GetJsonData(List<Node> nodes, List<Arc> arcs)
+        public static string HEADER_KEY = "DataSet";
+        public static string HEADER_ITEM = "For AlgoRaph";
+
+        public static string GetJsonData(List<Node> nodes, List<Arc> arcs, string? header_item=null)
         {
             RawGraphData rawData = new()
             {
+                DataSet = header_item,
                 nodeNames = nodes.Select(n => n.name).ToArray(),
                 nodePositions = nodes.Select(n => new double[2] { n.GetLocation().X, n.GetLocation().Y }).ToArray(),
 
@@ -34,7 +38,8 @@ namespace Algoraph.Scripts
             try
             {
                 RawGraphData? rawData = LoadRawData(jsonString);
-                if (rawData == null)
+               
+                if (rawData == null || rawData.DataSet != HEADER_ITEM)
                 {
                     arcs = null;
                     nodes = null;
@@ -75,7 +80,6 @@ namespace Algoraph.Scripts
 
         public static RawGraphData? LoadRawData(string jsonString)
         {
-            Console.WriteLine("LOADING JSON: " + jsonString);
             return JsonSerializer.Deserialize<RawGraphData>(jsonString);
         }
 

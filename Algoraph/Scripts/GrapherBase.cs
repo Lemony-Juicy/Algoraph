@@ -48,7 +48,6 @@ namespace Algoraph.Scripts
             arcs.Add(arc);
             arc.AddToCanvas(ed.mainCanvas, !ed.methods.hideWeightsCheckBox.IsChecked);
             Node.ConnectNodes(node1, node2, arc);
-            ed.RenderTable();
         }
 
         public void Disconnect(Node node1, Node node2) // Connecting Two Nodes
@@ -124,7 +123,7 @@ namespace Algoraph.Scripts
 
         public void RegularNodes(int degree, float size, Point startAt, double offsetAngle = 0)
         {
-            double angle = (Math.Tau) / degree;
+            double angle = Math.Tau / degree;
             for (int i = 1; i <= degree; i++)
             {
                 Point pos = Point.Add(startAt, AngleToPoint(angle * i + offsetAngle, size));
@@ -139,7 +138,7 @@ namespace Algoraph.Scripts
 
         public bool AddNode(Point pos)
         {
-            if (nodes.Count > 30)
+            if (nodes.Count >= 30)
             {
                 Editor.ShowError("Maximum amount of nodes allowed is 30, So you cannot create anymore nodes.");
                 return false;
@@ -147,7 +146,6 @@ namespace Algoraph.Scripts
             Node newNode = new Node(ed, pos, name: Node.GetNextName(nodes));
             nodes.Add(newNode);
             newNode.AddToCanvas(ed.mainCanvas);
-            ed.RenderTable();
             return true;
         }
 
@@ -161,7 +159,6 @@ namespace Algoraph.Scripts
                 RemoveArc(arc);
             }
             nodes.Remove(node);
-            ed.RenderTable();
         }
 
         public void RemoveArc(Arc arc)
@@ -169,7 +166,6 @@ namespace Algoraph.Scripts
             Node.DisconnectNodes(arc.connections[0], arc.connections[1], arc);
             arc.RemoveFromCanvas(ed.mainCanvas);
             arcs.Remove(arc);
-            ed.RenderTable();
         }
 
         public void ClearArcs()
@@ -180,7 +176,6 @@ namespace Algoraph.Scripts
                 arc.RemoveFromCanvas(ed.mainCanvas);
             }
             arcs.Clear();
-            ed.RenderTable();
         }
 
         public void ClearNodes()
@@ -188,7 +183,6 @@ namespace Algoraph.Scripts
             foreach (Node node in nodes)
                 node.RemoveFromCanvas(ed.mainCanvas);
             nodes.Clear();
-            ed.RenderTable();
         }
 
         #endregion

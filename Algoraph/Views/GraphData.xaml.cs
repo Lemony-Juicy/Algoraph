@@ -1,15 +1,9 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Data;
-using System.Windows.Data;
-using System.Windows.Threading;
-using Algoraph.Scripts;
-using System;
 
 namespace Algoraph.Views
 {
-
     public partial class GraphData : UserControl
     {
         readonly Editor ed;
@@ -18,8 +12,6 @@ namespace Algoraph.Views
         {
             InitializeComponent();
             this.ed = ed;
-
-
         }
 
         #region Node Panel
@@ -44,8 +36,7 @@ namespace Algoraph.Views
             if (!(e.Key == Key.Enter)) return;
             TextBox textBox = (TextBox)sender;
             textBox.ApplyTemplate();
-            TextBox inputText = ((TextBox)textBox.Template.FindName("inputText", textBox));
-            ed.ChangeNodeName(inputText.Text);
+            ed.ChangeNodeName(nodeTextbox.Text);
         }
 
         #endregion
@@ -69,9 +60,8 @@ namespace Algoraph.Views
             TextBox textBox = (TextBox)sender;
             if (!textBox.Template.HasContent)
                 textBox.ApplyTemplate();
-            TextBox inputText = (TextBox)textBox.Template.FindName("inputText", textBox);
 
-            if (uint.TryParse(inputText.Text, out uint weight))
+            if (uint.TryParse(arcTextbox.Text, out uint weight))
             {
                 if (weight > 0)
                     ed.ChangeArcWeights(weight);

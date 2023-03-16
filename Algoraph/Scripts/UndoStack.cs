@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 
-
 namespace Algoraph.Scripts
 {
     internal class UndoStack

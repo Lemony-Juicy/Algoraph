@@ -1,9 +1,7 @@
 ﻿<Application x:Class="Algoraph.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:Algoraph"
-             StartupUri="/AppWindows/MainMenu.xaml"
-    xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2">
+             StartupUri="/AppWindows/MainMenu.xaml">
     
     <Application.Resources>
         <ResourceDictionary>

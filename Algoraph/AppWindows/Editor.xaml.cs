@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Input.Manipulations;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using Algoraph.Scripts;
@@ -79,17 +80,10 @@ namespace Algoraph
 
         #region Graph Data Updates
 
-        /// <summary>
-        /// Updates the graph adjacency list table
-        /// </summary>
-        public void RenderTable()
-        {
-            graphData.adjDataGrid.ItemsSource = grapher.GetNodeInfo();
-        }
 
         public void BeforeGraphChanged()
         {
-            undoStack.Push(Saver.GetJsonData(grapher.nodes, grapher.arcs));
+            undoStack.Push(Saver.GetJsonData(grapher.nodes, grapher.arcs, header_item: Saver.HEADER_ITEM));
         }
 
         public void MarkAsChanged()
@@ -234,24 +228,20 @@ namespace Algoraph
 
             double size = width < height ? width*.5 : height*.5;
 
-            grapher.RegularNodes(degree, (float)size, new Point(width*.5, height*.5), offsetAngle: -Math.PI*.5);
+            grapher.RegularNodes(degree, (float)size - 10, new Point(width*.5, height*.5), offsetAngle: -Math.PI*.5);
             MarkAsChanged();
         }
 
-        public void CreateRandom(int rand1, int rand2)
+        public void CreateRandom(int iterations)
         {
             BeforeGraphChanged();
-            int iterations;
-            if (rand1 > rand2)
-                iterations = CustomExtentions.random.Next(rand2, rand1);
-            else
-                iterations = CustomExtentions.random.Next(rand1, rand2);
 
             for (int i = 0; i < iterations; i++)
             {
                 int width = (int)mainPanel.ActualWidth;
                 int height = (int)mainPanel.ActualHeight;
-                grapher.AddNode(new Point(CustomExtentions.random.Next(0, width), CustomExtentions.random.Next(0, height)));
+                if (!grapher.AddNode(new Point(CustomExtentions.random.Next(0, width), CustomExtentions.random.Next(0, height))))
+                    return;
             }
             MarkAsChanged();
         }
@@ -354,8 +344,8 @@ namespace Algoraph
 
         public async void RouteInspection()
         {
-            if (!CheckIsProcessing()) return;
-            if (!grapher.IsFullyConnected() && grapher.arcs.Count <= 1)
+            if (CheckIsProcessing()) return;
+            if (!grapher.IsFullyConnected() || grapher.arcs.Count <= 1)
             {
                 ShowError("Ensure graph is fully connected, and there is more than one arc, to carry out route inspection");
                 return;
@@ -365,12 +355,19 @@ namespace Algoraph
             SetProcessing(true);
             uint minTotalWeight = await grapher.RouteInspection(selectedArcs);
             SetProcessing(false);
-
-            MessageBox.Show($"The path to be repeated has been highlighted in Orange\n" +
-                $"{(minTotalWeight == 0? "This graph has too many odd nodes. Max number of odd nodes is 4": "Total minimum weighting for route: " + minTotalWeight.ToString())}",
+            if (minTotalWeight > 0)
+            {
+                MessageBox.Show($"The path to be repeated has been highlighted in Orange\n" +
+                "Total minimum weighting for route: " + minTotalWeight.ToString(),
                 "Route Inspection Information",
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
+            }
+            else
+            {
+                ShowError("This graph has too many odd nodes. Max number of odd nodes is 4");
+            }
+            
         }
 
 
@@ -542,11 +539,17 @@ namespace Algoraph
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (!Title.Contains('*')) return;
-            MessageBoxResult r = MessageBox.Show("Do you want to save?", "Save document", MessageBoxButton.YesNo);
+            Console.WriteLine(sender);
+            if (!Title.Contains('*') || !this.IsActive) return;
+            MessageBoxResult r = MessageBox.Show("Do you want to save?", "Save document", MessageBoxButton.YesNoCancel);
             if (r == MessageBoxResult.Yes)
             {
-                SaveState();
+                if (!SaveState())
+                    e.Cancel = true;
+            }
+            else if (r == MessageBoxResult.Cancel)
+            {
+                e.Cancel = true;
             }
         }
 
@@ -669,6 +672,7 @@ namespace Algoraph
             Node closestNode = grapher.GetClosestNode(Mouse.GetPosition(mainPanel));
             if (e.RightButton == MouseButtonState.Released && distance < 50 && nodeArcDraggedFrom != null)
             {
+                BeforeGraphChanged();
                 grapher.Connect(closestNode, nodeArcDraggedFrom);
             }
             nodeArcDraggedFrom = null;
@@ -719,6 +723,11 @@ namespace Algoraph
             if (Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.S))
             {
                 SaveState();
+            }
+
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.O))
+            {
+                MainMenu.OpenProject();
             }
 
             if (Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.Z))

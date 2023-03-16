@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -19,22 +18,6 @@ namespace Algoraph.Views
         {
             if (autoClear.IsChecked == true)
                 ed.ClearGraph(warning: false);
-        }
-
-        private bool TryParseRandNodeInp(out int[] rands)
-        {
-            rands = new int[2];
-
-            string[] randNodes = randomNodesInput.Text.Split(',');
-            if (randNodes.Length != 2) return false;
-
-            if (int.TryParse(randNodes[0], out int r1) && int.TryParse(randNodes[1], out int r2))
-            {
-                rands[0] = r1;
-                rands[1] = r2;
-                return true;
-            }
-            return false;
         }
 
         #region Events for Methods.xaml
@@ -73,10 +56,10 @@ namespace Algoraph.Views
         private void CreateRandom_Button(object sender, RoutedEventArgs e)
         {
             AutoClear();
-            if (TryParseRandNodeInp(out int[] rands))
-                ed.CreateRandom(rands[0], rands[1]);
+            if (int.TryParse(randomNodesInput.Text, out int rand))
+                ed.CreateRandom(rand);
             else
-                Editor.ShowError("Ensure that the random range of nodes to be plotted is in the format [R1, R2] where R1 and R2 are both integers.");
+                Editor.ShowError("Ensure that the input is an integer");
         }
 
         private void ConnectRandomly_Button(object sender, RoutedEventArgs e)

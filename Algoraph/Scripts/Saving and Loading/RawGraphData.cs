@@ -2,6 +2,7 @@
 {
     class RawGraphData
     {
+        public string? DataSet { get; set;} 
         public string[]? nodeNames { get; set; }
         public double[][]? nodePositions { get; set; }
 
