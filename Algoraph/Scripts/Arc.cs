@@ -31,6 +31,7 @@ namespace Algoraph.Scripts
             this.arcButton.ApplyTemplate();
             ConnectLine(node1, node2, weight);
 
+            // Check whether this is not in maze mode, then apply events 
             if (ed != null)
             {
                 this.arcButton.MouseEnter += ed.Arc_Enter;
@@ -83,11 +84,11 @@ namespace Algoraph.Scripts
         {
             Line arcLine = (Line)arcButton.Template.FindName("arcLine", arcButton);
 
-            double x_raw = (arcLine.X2 - arcLine.X1) * .5 + arcLine.X1;
-            double y_raw = (arcLine.Y2 - arcLine.Y1) * .5 + arcLine.Y1;
+            double x_raw = (arcLine.X2 - arcLine.X1) * 0.5 + arcLine.X1;
+            double y_raw = (arcLine.Y2 - arcLine.Y1) * 0.5 + arcLine.Y1;
 
-            double x = x_raw - weightLabel.ActualWidth / 2;
-            double y = y_raw - weightLabel.ActualHeight / 2;
+            double x = x_raw - weightLabel.ActualWidth * 0.5;
+            double y = y_raw - weightLabel.ActualHeight * 0.5;
             Canvas.SetLeft(weightLabel, x);
             Canvas.SetTop(weightLabel, y);
         }

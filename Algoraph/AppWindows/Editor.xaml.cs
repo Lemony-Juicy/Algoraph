@@ -79,13 +79,6 @@ namespace Algoraph
 
         #region Graph Data Updates
 
-        /// <summary>
-        /// Updates the graph adjacency list table
-        /// </summary>
-        public void RenderTable()
-        {
-            graphData.adjDataGrid.ItemsSource = grapher.GetNodeInfo();
-        }
 
         public void BeforeGraphChanged()
         {
@@ -234,24 +227,20 @@ namespace Algoraph
 
             double size = width < height ? width*.5 : height*.5;
 
-            grapher.RegularNodes(degree, (float)size, new Point(width*.5, height*.5), offsetAngle: -Math.PI*.5);
+            grapher.RegularNodes(degree, (float)size - 10, new Point(width*.5, height*.5), offsetAngle: -Math.PI*.5);
             MarkAsChanged();
         }
 
-        public void CreateRandom(int rand1, int rand2)
+        public void CreateRandom(int iterations)
         {
             BeforeGraphChanged();
-            int iterations;
-            if (rand1 > rand2)
-                iterations = CustomExtentions.random.Next(rand2, rand1);
-            else
-                iterations = CustomExtentions.random.Next(rand1, rand2);
 
             for (int i = 0; i < iterations; i++)
             {
                 int width = (int)mainPanel.ActualWidth;
                 int height = (int)mainPanel.ActualHeight;
-                grapher.AddNode(new Point(CustomExtentions.random.Next(0, width), CustomExtentions.random.Next(0, height)));
+                if (!grapher.AddNode(new Point(CustomExtentions.random.Next(0, width), CustomExtentions.random.Next(0, height))))
+                    return;
             }
             MarkAsChanged();
         }
@@ -354,8 +343,8 @@ namespace Algoraph
 
         public async void RouteInspection()
         {
-            if (!CheckIsProcessing()) return;
-            if (!grapher.IsFullyConnected() && grapher.arcs.Count <= 1)
+            if (CheckIsProcessing()) return;
+            if (!grapher.IsFullyConnected() || grapher.arcs.Count <= 1)
             {
                 ShowError("Ensure graph is fully connected, and there is more than one arc, to carry out route inspection");
                 return;
@@ -365,12 +354,19 @@ namespace Algoraph
             SetProcessing(true);
             uint minTotalWeight = await grapher.RouteInspection(selectedArcs);
             SetProcessing(false);
-
-            MessageBox.Show($"The path to be repeated has been highlighted in Orange\n" +
-                $"{(minTotalWeight == 0? "This graph has too many odd nodes. Max number of odd nodes is 4": "Total minimum weighting for route: " + minTotalWeight.ToString())}",
+            if (minTotalWeight > 0)
+            {
+                MessageBox.Show($"The path to be repeated has been highlighted in Orange\n" +
+                "Total minimum weighting for route: " + minTotalWeight.ToString(),
                 "Route Inspection Information",
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
+            }
+            else
+            {
+                ShowError("This graph has too many odd nodes. Max number of odd nodes is 4");
+            }
+            
         }
 
 
@@ -511,22 +507,16 @@ namespace Algoraph
             return await nextStepClicked.Task;
         }
 
-        /// <summary>
-        /// Checks whether mouse is in the main editor panel.
-        /// </summary>
-        /// <returns>False if mouse not in main panel.</returns>
         private bool IsMouseMainPanel()
         {
+            // Checks whether mouse is in the main editor panel.
             Point pos = Mouse.GetPosition(mainPanel);
             return pos.X > 0 && pos.Y > 0 && pos.X < mainPanel.ActualWidth && pos.Y < mainPanel.ActualHeight;
         }
 
-        /// <summary>
-        /// Gets the clamped mouse position relative to the main panel, so the position is always inside the main panel.
-        /// </summary>
-        /// <returns>Point of the clamped mouse position.</returns>
         private Point MousePosMainPanel()
         {
+            // Gets the clamped mouse position relative to the main panel, so the position is always inside the main panel.
             Point pos = Mouse.GetPosition(mainPanel);
             return new Point(Math.Clamp(pos.X, 0, mainPanel.ActualWidth), Math.Clamp(pos.Y, 0, mainPanel.ActualHeight));
         }
@@ -542,11 +532,17 @@ namespace Algoraph
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (!Title.Contains('*')) return;
-            MessageBoxResult r = MessageBox.Show("Do you want to save?", "Save document", MessageBoxButton.YesNo);
+            Console.WriteLine(sender);
+            if (!Title.Contains('*') || !this.IsActive) return;
+            MessageBoxResult r = MessageBox.Show("Do you want to save?", "Save document", MessageBoxButton.YesNoCancel);
             if (r == MessageBoxResult.Yes)
             {
-                SaveState();
+                if (!SaveState())
+                    e.Cancel = true;
+            }
+            else if (r == MessageBoxResult.Cancel)
+            {
+                e.Cancel = true;
             }
         }
 
@@ -669,6 +665,7 @@ namespace Algoraph
             Node closestNode = grapher.GetClosestNode(Mouse.GetPosition(mainPanel));
             if (e.RightButton == MouseButtonState.Released && distance < 50 && nodeArcDraggedFrom != null)
             {
+                BeforeGraphChanged();
                 grapher.Connect(closestNode, nodeArcDraggedFrom);
             }
             nodeArcDraggedFrom = null;
@@ -719,6 +716,11 @@ namespace Algoraph
             if (Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.S))
             {
                 SaveState();
+            }
+
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.O))
+            {
+                MainMenu.OpenProject();
             }
 
             if (Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.Z))

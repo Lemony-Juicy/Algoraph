@@ -1,10 +1,7 @@
 ﻿using System;
-using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Xml.Linq;
-using Algoraph.Scripts.Saving_and_Loading;
 
 namespace Algoraph.Scripts
 {
@@ -28,8 +25,6 @@ namespace Algoraph.Scripts
         {
             Node[]? nodes; 
             Arc[]? arcs;
-
-            
 
             // Try to load the data. If not possible, Let user know that this file is not supported
             try
@@ -74,13 +69,6 @@ namespace Algoraph.Scripts
             }
             return true;
         }
-
-        public bool IsTree()
-        {
-            return this.nodes.Count + 1 == this.arcs.Count;
-        }
-
-
         #endregion
 
         #region Spanning Trees
@@ -101,15 +89,9 @@ namespace Algoraph.Scripts
             return result;
         }
 
-        /// <summary>
-        /// Checks whether the current tree state is fully done.
-        /// </summary>
-        /// <param name="connector">Nodes in the tree</param>
-        /// <param name="selectedArcs">The SelectedArcs class, so if fully spanned can be added to, and highlighted</param>
-        /// <param name="usedArcs">Arcs that have already been visited by the algorithm</param>
-        /// <returns></returns>
         private async Task<bool> IsFullySpannedTree(List<Node> connector, SelectedArcs selectedArcs, List<Arc> usedArcs)
         {
+            // Checks whether the current tree state is fully done, and highlights tree if fully done.
             if (connector.Count != this.nodes.Count) return false;
 
             foreach(Arc arc in usedArcs) 
@@ -140,7 +122,7 @@ namespace Algoraph.Scripts
 
         public async Task Kruskals(SelectedArcs selectedArcs)
         {
-            // Essentially finding the minimum arc, and then performing prim's algorithm on it.
+            // Finding the minimum arc, and then performing prim's algorithm on it.
             uint minArcWeight = this.arcs.Min(a => a.weight);
             Arc minArc = this.arcs.Find(a => a.weight == minArcWeight);
 
@@ -151,15 +133,9 @@ namespace Algoraph.Scripts
 
         #region Dijkstra’s Algorithm
 
-        /// <summary>
-        /// Traces path by selecting the arcs in the editor from the Dijkstra's data
-        /// </summary>
-        /// <param name="startNode"></param>
-        /// <param name="currentNode"></param>
-        /// <param name="previous"></param>
-        /// <param name="selectedArcs"></param>
         public async Task BackTrackTrace(Node startNode, Node currentNode, Node[] previous, SelectedArcs selectedArcs)
         {
+            // Traces path by selecting the arcs in the editor from the Dijkstra's data
             if (currentNode == startNode) return;
             Arc? nextArc = currentNode.arcConnections.Find(a
                 => a.GetConnectedNode(currentNode) == previous[this.nodes.IndexOf(currentNode)]);
@@ -169,18 +145,10 @@ namespace Algoraph.Scripts
             await BackTrackTrace(startNode, nextArc.GetConnectedNode(currentNode), previous, selectedArcs);
         }
 
-
-        /// <summary>
-        /// Returns the previous nodes for the current node in order of index. Eg: at index 5: Node N2
-        /// It will give the shortest path of all nodes from a starting node in the weighting array.
-        /// </summary>
-        /// <param name="startNode">The start node to being from</param>
-        /// <param name="weighting">A list for which to put the weightings in</param>
-        /// <param name="endNode">The end node to backtrace. If this is null, no backtracing will take place.</param>
-        /// <param name="selectedArcs">The selectedarcs object so arcs can be selected if backtracing in the editor</param>
-        /// <returns></returns>
         public Node[]? DijkstrasInfo(Node startNode, out uint[] weighting)
         {
+            // Returns the previous nodes for the current node in order of index. Eg: at index 5: Node N2
+            // It will give the shortest path of all nodes from a starting node in the weighting array.
             int nodeCount = this.nodes.Count;
 
             // Initialising all the empty arrays/lists for Dijkstras..

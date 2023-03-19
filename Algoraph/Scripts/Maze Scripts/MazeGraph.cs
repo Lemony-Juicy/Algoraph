@@ -19,7 +19,6 @@ namespace Algoraph.Scripts.Maze_Scripts
         public int graphHeight { get; private set; }
 
         Editor ed;
-        Random random = new Random();
         MazeNode? startNode = null;
         MazeNode? endNode = null;
 

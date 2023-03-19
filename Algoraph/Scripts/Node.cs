@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows.Controls;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Controls.Primitives;
 using Algoraph.Scripts.Maze_Scripts;
-using Windows.Data.Xml.Dom;
 
 namespace Algoraph.Scripts
 {
     internal class Node
     {
-        public static float radius = 12.5f;
+        public static float radius = 15f;
 
         public List<Node> nodeConnections { get; private set; }
         public List<Arc> arcConnections { get; private set; }
@@ -22,16 +20,20 @@ namespace Algoraph.Scripts
         private Point location;
         public ToggleButton nodeButton { get; private set; }
 
+
         public Node(Editor ed, Point location, string name = "", List<Node>? connections = null)
         {
             this.nodeConnections = connections ?? new List<Node>();
             this.arcConnections = new List<Arc>();
 
             object s = IsMazeNode()? ed.FindResource("mazeNodeUI"): ed.FindResource("nodeUI");
+
+            // This is the UI object that will be displayed on the screen
             this.nodeButton = new ToggleButton()
             {
                 Style = (Style)s,
                 Background = (LinearGradientBrush)ed.FindResource("OrangeGradient"),
+                // MinWidth has been binded to be the actual width for the ellipse
                 MinWidth = Node.radius * 2,
                 Tag = this
             };
@@ -40,7 +42,8 @@ namespace Algoraph.Scripts
 
             SetLocation(location.X, location.Y);
 
-            // Ensures the button events are only enabled if the 
+            // Ensures the button events are only enabled if the Node is not a MazeNode
+            // This is to prevent the user deleting maze nodes
             if (!IsMazeNode())
             {
                 this.nodeButton.Checked += ed.Node_Checked;
@@ -49,6 +52,8 @@ namespace Algoraph.Scripts
                 this.nodeButton.MouseLeave += ed.Node_Leave;
             }
             
+            // Setting the Z layer for this object to be rendered to be high,
+            // so it renders above the arc
             Canvas.SetZIndex(this.nodeButton, 500);
         }
 
@@ -59,7 +64,7 @@ namespace Algoraph.Scripts
 
         public Point GetLocation()
         {
-            return Point.Add(location, new Vector(50, 50));
+            return Point.Add(location, new Vector(nodeButton.Width * 0.5, nodeButton.Height * 0.5));
         }
 
         public void Uncheck()
@@ -69,7 +74,6 @@ namespace Algoraph.Scripts
 
         public void AddToCanvas(Canvas canvas)
         {
-            //if (canvas.Children.Contains(nodeButton)) return;
             canvas.Children.Add(nodeButton);
         }
 
@@ -103,10 +107,13 @@ namespace Algoraph.Scripts
         }
 
         public void SetLocation(double X, double Y)
-        { 
-            this.location = new Point(X-50, Y-50);
-            Canvas.SetLeft(nodeButton, X-50);
-            Canvas.SetTop(nodeButton, Y-50);
+        {
+            X -= nodeButton.Width*0.5;
+            Y -= nodeButton.Height*0.5;
+
+            this.location = new Point(X, Y);
+            Canvas.SetLeft(nodeButton, X);
+            Canvas.SetTop(nodeButton, Y);
         }
 
         public bool ChangeName(string newName)
