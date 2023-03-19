@@ -15,15 +15,11 @@ namespace Algoraph.Scripts.Maze_Scripts
 
         public float Distance(Coordinate c)
         {
+            // Pythagoras's theorem
             double x_squared = Math.Pow(c.x-x, 2);
             double y_squared = Math.Pow(c.y-y, 2);
 
             return (float)Math.Pow(x_squared + y_squared, 0.5);
-        }
-
-        public override string ToString()
-        {
-            return $"({x}, {y})";
         }
 
         public Coordinate Add(int x, int y)
@@ -31,27 +27,10 @@ namespace Algoraph.Scripts.Maze_Scripts
             return new Coordinate(this.x + x, this.y + y);
         }
 
-        public Coordinate Mult(int value)
-        {
-            return new Coordinate(x * value, y * value);
-        }
-
-
-        public static Coordinate AddC(Coordinate c1, Coordinate c2)
-        {
-            return new Coordinate(c1.x + c2.x, c1.y + c2.y);
-        }
-
-
         public override bool Equals(object? obj)
         {
             Coordinate? c = obj as Coordinate;
             return c != null && c.x == x && c.y == y;
-        }
-
-        public override int GetHashCode()
-        {
-            throw new NotImplementedException();
         }
     }
 }

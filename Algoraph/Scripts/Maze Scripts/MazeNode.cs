@@ -8,8 +8,11 @@ namespace Algoraph.Scripts.Maze_Scripts
 {
     internal class MazeNode : Node
     {
+        // Relative position is the relative position in the grid of nodes, 
+        // EG: 
         public Coordinate relativePos { get; private set; }
 
+        // These attributes are for the A* Algorithm
         public float F_cost = float.PositiveInfinity;
         public float G_cost = float.PositiveInfinity;
         public float H_cost = float.PositiveInfinity;

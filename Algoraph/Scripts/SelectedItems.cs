@@ -18,6 +18,7 @@ namespace Algoraph.Scripts
         public void ClearItems()
         {
             foreach (Node node in nodes.ToArray())
+                // When the node is unchecked, an event is called to render it differently
                 node.Uncheck();
             nodes.Clear();
         }
@@ -25,20 +26,19 @@ namespace Algoraph.Scripts
         public void AddItem(Node? node)
         {
             if (node == null || nodes.Contains(node)) return;
-
             nodes.Add(node);
         }
 
         void RemoveItem(Node? node)
         {
-            if (node == null) return;
-
             nodes.Remove(node);
         }
 
         public void OnCheck(Node? node, SelectedArcs selectedArcs)
         {
+            // Clearing any selected arcs before selecting a node
             selectedArcs.ClearItems();
+
             AddItem(node);
         }
 
@@ -49,15 +49,22 @@ namespace Algoraph.Scripts
 
         public void OnLeave()
         {
+            // Program checks whether any nodes are selected, and mouse is in cross mode
             if (previousMouseMode == Cursors.Cross && nodes.Count == 0)
                 ed.CursorCrossMode();
             else
+                // We set mouse to arrow mode if there are selected items
+                // because the user can click off onto the canvas to deselect
+                // any seleted items WITHOUT adding a node to the canvas
                 ed.CursorArrowMode();
         }
 
         public void OnEnter()
         {
+            // This is called when the mouse hovers over the node
+            // We keep track of the cursor icon before it entered the node
             previousMouseMode = ed.mainPanel.Cursor;
+            // We then change the cursor icon to hand mode
             ed.CursorHandMode();
         }
     }

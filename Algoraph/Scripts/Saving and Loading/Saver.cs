@@ -13,11 +13,12 @@ namespace Algoraph.Scripts
         public static string HEADER_KEY = "DataSet";
         public static string HEADER_ITEM = "For AlgoRaph";
 
-        public static string GetJsonData(List<Node> nodes, List<Arc> arcs, string? header_item=null)
+        public static string GetJsonData(List<Node> nodes, List<Arc> arcs)
         {
+            // Converts the nodes and arcs data into a JSON string and returns it
             RawGraphData rawData = new()
             {
-                DataSet = header_item,
+                DataSet = HEADER_ITEM,
                 nodeNames = nodes.Select(n => n.name).ToArray(),
                 nodePositions = nodes.Select(n => new double[2] { n.GetLocation().X, n.GetLocation().Y }).ToArray(),
 
@@ -33,8 +34,11 @@ namespace Algoraph.Scripts
             File.WriteAllText(path, jsonString);
         }
 
+        // Returns true if successful, else false
         public static bool LoadNodesArcs(Editor ed, string jsonString, out Arc[]? arcs, out Node[]? nodes)
         {
+            // Using the JSON string, this method will create and associate the nodes and arcs together, 
+            // creating the objects and storing them in the 'arcs' and 'nodes' variables
             try
             {
                 RawGraphData? rawData = LoadRawData(jsonString);
@@ -80,6 +84,9 @@ namespace Algoraph.Scripts
 
         public static RawGraphData? LoadRawData(string jsonString)
         {
+            // Using the JsonSerializer, we can deserialize the JSON string into a 
+            // RawGraphData object which will make it easier to extract the data needed
+            // to create the node and arc objects.
             return JsonSerializer.Deserialize<RawGraphData>(jsonString);
         }
 
@@ -88,6 +95,5 @@ namespace Algoraph.Scripts
             return File.ReadAllText(path);
         }
     }
-
 }
 

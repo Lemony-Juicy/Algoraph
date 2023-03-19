@@ -22,7 +22,9 @@ namespace Algoraph.Scripts
             }
         }
 
-        public string? Pop()
+        // This is private since it shouldn't be used externally, 
+        // Instead use LoadPrevious method
+        private string? Pop()
         {
             int index = undoList.Count - 1;
 

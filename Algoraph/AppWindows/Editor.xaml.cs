@@ -6,7 +6,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using System.Windows.Input.Manipulations;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using Algoraph.Scripts;
@@ -83,7 +82,7 @@ namespace Algoraph
 
         public void BeforeGraphChanged()
         {
-            undoStack.Push(Saver.GetJsonData(grapher.nodes, grapher.arcs, header_item: Saver.HEADER_ITEM));
+            undoStack.Push(Saver.GetJsonData(grapher.nodes, grapher.arcs));
         }
 
         public void MarkAsChanged()
@@ -508,22 +507,16 @@ namespace Algoraph
             return await nextStepClicked.Task;
         }
 
-        /// <summary>
-        /// Checks whether mouse is in the main editor panel.
-        /// </summary>
-        /// <returns>False if mouse not in main panel.</returns>
         private bool IsMouseMainPanel()
         {
+            // Checks whether mouse is in the main editor panel.
             Point pos = Mouse.GetPosition(mainPanel);
             return pos.X > 0 && pos.Y > 0 && pos.X < mainPanel.ActualWidth && pos.Y < mainPanel.ActualHeight;
         }
 
-        /// <summary>
-        /// Gets the clamped mouse position relative to the main panel, so the position is always inside the main panel.
-        /// </summary>
-        /// <returns>Point of the clamped mouse position.</returns>
         private Point MousePosMainPanel()
         {
+            // Gets the clamped mouse position relative to the main panel, so the position is always inside the main panel.
             Point pos = Mouse.GetPosition(mainPanel);
             return new Point(Math.Clamp(pos.X, 0, mainPanel.ActualWidth), Math.Clamp(pos.Y, 0, mainPanel.ActualHeight));
         }
